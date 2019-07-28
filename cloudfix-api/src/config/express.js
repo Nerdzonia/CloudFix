@@ -6,7 +6,7 @@ async function express(){
         const PORT = process.env.PORT || '8080';
         
         // DATABASE
-        const dbConnect = require('./database');
+        const { dbConnect } = require('./database');
         await dbConnect();
         
         // MIDDLEWARES
@@ -14,7 +14,7 @@ async function express(){
         app.use(bodyParser.json());
         
         // API ROUTES
-        require('../controllers/authController')(app);
+        require('../routes')(app);
 
         // OPEN API
         app.listen(PORT, () => {
