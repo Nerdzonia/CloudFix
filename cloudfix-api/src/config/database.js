@@ -14,10 +14,13 @@ async function dbConnect(){
             () => console.log(`Database connected sucessfully!`)
         );
         
-        return connection;
+        return mongoose;
     }catch (error){
         throw error
     }
 }
 
-module.exports = dbConnect;
+module.exports = {
+    mongoose,
+    dbConnect
+};
