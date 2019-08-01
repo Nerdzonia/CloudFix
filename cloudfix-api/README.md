@@ -12,4 +12,4 @@ DATABASE_CONNECTION_URI
 HASH
 ```
 
-## [mongo free server](https://www.mongodb.com/cloud/atlas)
+## [mongo free database](https://www.mongodb.com/cloud/atlas)

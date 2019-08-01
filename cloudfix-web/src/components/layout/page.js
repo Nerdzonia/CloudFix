@@ -15,5 +15,6 @@ const Page = (props) => (
             {props.children}
         </main>
     </>
-)
+);
+
 export default Page;

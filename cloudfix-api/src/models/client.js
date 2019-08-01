@@ -1,7 +1,5 @@
 const { mongoose } = require('../config/database');
 
-// const TicketSchema = require('./ticket');
-
 const ClientSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -21,7 +19,7 @@ const ClientSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     }
-});
+}, { timestamps: true });
 
 const Client = mongoose.model('Client', ClientSchema);
 

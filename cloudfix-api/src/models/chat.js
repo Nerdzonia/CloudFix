@@ -1,7 +1,6 @@
 const { mongoose } = require('../config/database');
 
 const chatSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     name: {
         type: String,
         required: true,
@@ -14,7 +13,7 @@ const chatSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     }
-});
+}, { timestamps: true });
 
 const Chat = mongoose.model('Chat', chatSchema);
 
