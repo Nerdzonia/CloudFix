@@ -9,7 +9,8 @@ async function dbConnect(){
             connection, 
             {
                 useNewUrlParser: true,
-                useCreateIndex: true
+                useCreateIndex: true,
+                useFindAndModify: false,
             }, 
             () => console.log(`Database connected sucessfully!`)
         );

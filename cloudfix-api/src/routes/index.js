@@ -6,5 +6,6 @@ module.exports = app => {
     //path Client
     require('../controllers/clientController')(app);
 
-
+    //path projects
+    require('../controllers/ticketController')(app);
 };
