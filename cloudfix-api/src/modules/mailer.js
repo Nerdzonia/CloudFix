@@ -22,6 +22,6 @@ const transport = nodemailer.createTransport({
 //     extName: '.html',
 // }
 
-transport.use('compile', hbs(templateOptions));
+//transport.use('compile', hbs(templateOptions));
 
 module.exports = transport;
