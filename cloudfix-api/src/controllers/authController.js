@@ -1,10 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
-const mailer = require('../modules/mailer')
 
 const User = require('../models/user');
 const generateToken = require('../utils/jwt');
+const convertToHtmlAndSendMail = require('../modules/ejs');
 
 const router = express.Router();
 const HASH = process.env.HASH || 'DefaultHash';
@@ -68,21 +68,17 @@ router.post('/change_password', async (req, res) => {
                 passwordResetExpires: now,
             }
         });
-        
-        res.send({token});
-        // testing send email
-        // mailer.sendMail({
-        //     to: email,
-        //     from: 'icarodaviduarte@gmail.com',
-        //     template: 'auth/email_template',
-        //     context: { token },
-        // }, (err) => {
-        //     console.log(err)
-        //     if(err)
-        //         return res.status(400).send({ error: `Cannot send change password email.`})
+    
+        const data = {
+            token
+        }
 
-        //     return res.send();
-        // });
+        const mailer = {
+            to: email,
+            from: 'handhead@gmail.com',
+        }
+        convertToHtmlAndSendMail(data  ,mailer);
+        res.send(user.id)
     }catch (error) {
         console.log(error)
         res.status(400).send({ error: 'Error on try change password!'});

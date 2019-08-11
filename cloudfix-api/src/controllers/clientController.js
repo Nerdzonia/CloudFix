@@ -11,21 +11,21 @@ router.post('/newTicket', async (req, res) => {
         const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
             name: Joi.string().required(),
-            ticket: {
-                title: Joi.string().min(5).required(),
-                message: Joi.string().min(5).required(),
-                system: Joi.string().required()
-            }
+            title: Joi.string().min(5).required(),
+            message: Joi.string().min(5).required(),
+            system: Joi.string().required()
+            
         });
-
         Joi.validate(req.body, schema, async (err, result) => {
             if(err)
                 res.send({error: `An error has ocurred ${err}`});
 
-                const { email, name, ticket } = result;
-
+                const { email, name, title, message, system } = result;
+            
                 const createTicket = new Ticket({
-                    ...ticket
+                    title,
+                    message,
+                    system
                 });
 
                 if(await Client.findOne({ email })){
@@ -45,8 +45,8 @@ router.post('/newTicket', async (req, res) => {
                 }
 
                 const client = new Client({
-                    name: name,
-                    email: email,
+                    name,
+                    email,
                     tickets: createTicket._id
                 });
                 
