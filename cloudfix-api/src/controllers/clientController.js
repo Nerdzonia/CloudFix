@@ -1,6 +1,8 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
 
+const convertToHtmlAndSendMail = require('../modules/ejs');
+
 const Client = require('../models/client');
 const Ticket = require('../models/ticket');
 
@@ -38,7 +40,18 @@ router.post('/newTicket', async (req, res) => {
                             if(err) throw err;
                         });
                         
-                        await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Dont create a new Ticket` }));                               
+                        const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Dont create a new Ticket` }));       
+
+                        const data = {
+                            link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                        }
+                
+                        const mailer = {
+                            to: email,
+                            from: 'handhead@gmail.com',
+                        }
+                
+                        await convertToHtmlAndSendMail(data  ,mailer);                       
                     });
                     
                     return res.send({response: tickets});
@@ -51,7 +64,18 @@ router.post('/newTicket', async (req, res) => {
                 });
                 
                 const clientSuccess = await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
-                await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));            
+                const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` })); 
+                
+                const data = {
+                    link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                }
+        
+                const mailer = {
+                    to: email,
+                    from: 'handhead@gmail.com',
+                }
+        
+                await convertToHtmlAndSendMail(data  ,mailer);  
                 
                 return res.send({ clientSuccess });
         });

@@ -1,6 +1,6 @@
 const path = require('path');
-const fs = require('fs');
 const ejs = require('ejs');
+// const fs = require('fs');
 const transporter = require('./mailer');
 
 function convertToHtmlAndSendMail(data, mailer) {
@@ -14,8 +14,6 @@ function convertToHtmlAndSendMail(data, mailer) {
         }, (err, info) => {
             if(err)
                 console.log(`Error on send Mail ${err}`);
-            else   
-                console.log(`Message send ${info.response}`)
         });
     });
 }

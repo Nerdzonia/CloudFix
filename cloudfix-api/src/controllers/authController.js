@@ -70,18 +70,48 @@ router.post('/change_password', async (req, res) => {
         });
     
         const data = {
-            token
+            link: `${process.env.HOST}${process.env.PORT || ''}/ticket/${token}`
         }
 
         const mailer = {
             to: email,
             from: 'handhead@gmail.com',
         }
+
         convertToHtmlAndSendMail(data  ,mailer);
-        res.send(user.id)
+        
+        res.send({message: `Send to email ${email}`})
     }catch (error) {
         console.log(error)
         res.status(400).send({ error: 'Error on try change password!'});
+    }
+});
+
+router.post('/reset_password', async (req, res) => {
+    const { email, token, password } = req.body;
+
+    try{
+        const user = await User.findOne({ email })
+            .select('+passwordResetToken passwordResetExpires');
+
+        if(!user)
+            return res.status(400).send({error: 'User not found'});
+
+        if( token !== user.passwordResetToken)
+            return res.status(400).send({ error: 'Token invalid' });
+
+        const now = new Date();
+
+        if(now > user.passwordResetExpires)
+            return res.status(400).send({error: 'Token expired, generate a new one'});
+        
+        user.password = password;
+
+        await user.save();
+
+        res.send({message: 'Save password'});
+    } catch (err) {
+        res.status(400).send({error : 'Cannot reset password'})
     }
 });
 
