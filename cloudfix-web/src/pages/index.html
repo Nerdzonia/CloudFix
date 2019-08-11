@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>CloudFix | HandHead</title>
+    <meta name="description" content="A CloudFix, é um sistema helpdesk para auxiliar usuários a reportar problemas no sistemas.">
+    <meta name="keywords" content="cloudfix, handhead, software, aplicativo, android, ios, web, aplicação, desenvolvimento, fábrica, juazeiro do norte, crato, barbalha, cariri, ceará, fortaleza, recife">
+    <meta name="author" content="CloudFix">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <link rel="shortcut icon" href="" type="image/x-icon">
+
+    <!-- imports -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/js/semantic.min.js">
+    <link rel="stylesheet" type="text/css" href="../../assets/js/jquery-1.11.1.min.js">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/Semantic-UI-CSS-master/components/icon.min.css">
+
+</head>
+
+<body>
+    <div class="ui three column stackable centered basic segment grid header">
+        <div class="four wide center aligned computer only column">
+            <!--EMPTY SPACE-->
+        </div>
+        <div class="eight wide center aligned column">
+            <h1>CloudFix LOGO</h1>
+        </div>
+        <div class="four wide center aligned column">
+            <h3><a href="#"><u>Admin area</u></a></h3>
+        </div>
+    </div>
+
+    <div class="ui grid body">
+        <div class="ui container">
+            <div class="ui one column grid">
+
+                <div class="ten wide centered column">
+
+                    <div class="ui row">
+                        <div class="ui center aligned column title">
+                            <h1>Solicitar Ticket</h1>
+                            <div class="ui text container">
+                                Para solicitar um ticket, é necessário que informe seus dados, e depois descrever o problema
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui divider"></div>
+
+                    <div class="center aligned column formArea">
+
+                        <form class="ui form">
+
+
+                            <div class="ui stackable one column vertically divided grid container">
+
+                                <h2 class="ui left floated header">Dados Pessoais</h2>
+
+                                <div class="row">
+                                    <div class="column">
+
+                                        <label for="name"> <h4 class="ui header"> Nome: </h4> </label>
+
+                                        <div class="ui corner labeled fluid input">
+                                            <input type="text" id="name" placeholder="Informe seu nome...">
+                                            <div class="ui corner label">
+                                                <i class="asterisk icon"></i>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="column">
+
+                                        <label for="email"> <h4 class="ui header"> Email: </h4> </label>
+
+                                        <div class="ui corner labeled fluid input">
+                                            <input type="text" id="email" placeholder="Informe seu email...">
+                                            <div class="ui corner label">
+                                                <i class="asterisk icon"></i>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <h2 class="ui left floated header">Detalhes sobre a Solicitação</h2>
+
+                                <div class="row">
+
+                                    <div class="column">
+
+                                        <label for="description"> <h4 class="ui header"> Descrição: </h4> </label>
+                                        <div class="ui corner labeled fluid input">
+                                            <textarea placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..." rows="3"></textarea>
+                                            <div class="ui corner label">
+                                                <i class="asterisk icon"></i>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="ui row">
+                                    <div class="ui right aligned floated column">
+                                        <div class="ui buttons">
+                                            <button class="ui button">Cancelar</button>
+                                            <div class="or" data-text="ou"></div>
+                                            <button class="ui right labeled icon positive button">
+                                            <i class="check icon"></i>
+                                            Solicitar Ticket
+                                          </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+    </div>
+
+    <div class="ui three column stackable centered segment basic grid footer">
+        <div class="four wide center aligned computer only column">
+            <!--EMPTY SPACE-->
+        </div>
+        <div class="eight wide center aligned column">
+            <h1>CloudFix FOOTER</h1>
+        </div>
+        <div class="four wide center aligned column">
+            <h1>
+                <a href="#"><img width="60" height="60" src="data:image/png;base64,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"></h1>
+        </div>
+    </div>
+
+</body>
+
+</html>
