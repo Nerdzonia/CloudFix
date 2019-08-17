@@ -28,6 +28,7 @@ router.post('/newTicket', async (req, res) => {
             const createTicket = new Ticket({
                 title,
                 message,
+                name,
                 system
             });
 
@@ -59,7 +60,6 @@ router.post('/newTicket', async (req, res) => {
             }
 
             const client = new Client({
-                name,
                 email,
                 tickets: createTicket._id
             });

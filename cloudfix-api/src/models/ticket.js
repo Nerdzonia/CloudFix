@@ -1,6 +1,10 @@
 const { mongoose } = require('../config/database');
 
 const TicketSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
     title: {
         type: String,
         required: true,

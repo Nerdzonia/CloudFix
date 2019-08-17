@@ -11,15 +11,16 @@ const router = express.Router();
 const HASH = process.env.HASH || 'DefaultHash';
 
 router.post('/register', async (req, res) => {
-    const schema = Joi.object().keys({
-        email: Joi.string().trim().email().require()
-    });
+    try {
+        const schema = Joi.object().keys({
+            email: Joi.string().trim().email().required(),
+            password: Joi.string().required()
+        });
 
-    Joi.validate(req.body, schema, async (err, result) => {
-        if (err)
-            return res.status(400).send({ error: `Failed to validade a new user ${err}` });
+        Joi.validate(req.body, schema, async (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Failed to validade a new user ${err}` });
 
-        try {
             const { email } = result
             if (await User.findOne({ email }))
                 return res.status(400).send({ error: "User already exists!" });
@@ -34,22 +35,22 @@ router.post('/register', async (req, res) => {
                 user,
                 token,
             });
-        } catch (error) {
-            return res.status(400).send({ error: 'Registration failed!' });
-        }
-    });
+        });
+    } catch (error) {
+        return res.status(400).send({ error: 'Registration failed!' });
+    }
 });
 
 router.post('/authenticate', async (req, res) => {
-    const schema = Joi.object().keys({
-        email: Joi.string().trim().email().require(),
-        password: Joi.string().require()
-    });
+    try {
+        const schema = Joi.object().keys({
+            email: Joi.string().trim().email().required(),
+            password: Joi.string().require()
+        });
 
-    Joi.validate(req.body, schema, async (err, result) => {
-        if (err)
-            return res.status(400).send({ error: `Validate error ${err}` });
-        try {
+        Joi.validate(req.body, schema, async (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Validate error ${err}` });
             const { email, password } = result;
 
             const user = await User.findOne({ email }).select('+password');
@@ -66,23 +67,23 @@ router.post('/authenticate', async (req, res) => {
                 user,
                 token,
             });
-        } catch (err) {
-            res.status(400).send({ error: `Failed to authenticate ${err}` });
-        }
-    });
+        });
+    } catch (err) {
+        res.status(400).send({ error: `Failed to authenticate ${err}` });
+    }
 });
 
 router.post('/change_password', async (req, res) => {
-    const schema = Joi.object.keys({
-        email: Joi.string().trim().email().require(),
-    });
+    try {
+        const schema = Joi.object.keys({
+            email: Joi.string().trim().email().required(),
+        });
 
-    Joi.validate(req.body, schema, async (err, result) => {
-        if (err)
-            return res.status(400).send({ error: `Validate error ${err}` });
+        Joi.validate(req.body, schema, async (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Validate error ${err}` });
 
-        const { email } = result;
-        try {
+            const { email } = result;
             const user = await User.findOne({ email });
 
             if (!user)
@@ -112,11 +113,11 @@ router.post('/change_password', async (req, res) => {
             convertToHtmlAndSendMail(data, mailer);
 
             res.send({ message: `Send to email ${email}` });
-        } catch (error) {
-            console.log(error)
-            res.status(400).send({ error: 'Error on try change password!' });
-        }
-    });
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({ error: 'Error on try change password!' });
+    }
 });
 
 router.post('/reset_password', async (req, res) => {
