@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-
 import PageLayout from '../components/layout/page'
 import { Input } from '../components/utils/input';
 
@@ -10,26 +8,39 @@ const style = {
     }
 }
 
-const Index = () => {
-    const [input, setInput] = useState('');
-    const getInputText = (e) => {
-        setInput(e.target.value);
+class Index extends React.Component {
+    constructor(props){
+        super(props);
+
+        this.state ={
+            input : ''
+        }
+
+        this.getInputText = this.getInputText.bind(this);
     }
 
-    return (
-        <PageLayout>
-            <div style={style.content}>
-                <h1>Hello World!</h1>
-                <a href='https://nextjs.org/' target='_blank'>Learn more Next</a>
-                <Input 
-                    type="text" 
-                    placeholder="Hello World" 
-                    value={input} 
-                    onChange={getInputText}
-                     />
-            </div>
-        </PageLayout>
-    );
+    getInputText(event){
+        this.setState({
+            input: event.target.value
+        });
+    }
+
+    render(){
+        return (
+            <PageLayout>
+                <div style={style.content}>
+                    <h1>{this.state.input}</h1>
+                    <a href='https://nextjs.org/' target='_blank'>Learn more Next</a>
+                    <Input 
+                        type="text" 
+                        placeholder="Hello World" 
+                        value={this.state.input} 
+                        onChange={this.getInputText}
+                    />
+                </div>
+            </PageLayout>
+        );
+    }
 
 }
 

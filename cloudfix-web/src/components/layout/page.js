@@ -1,20 +1,25 @@
-import React from 'react';
+import Link from 'next/link';
+import { Grid, Image, Container } from 'semantic-ui-react';
 
-import image from '../../../assets/images/background.jpg';
+import Footer from '../../components/footer/footer';
 
-import '../../../assets/scss/themes.scss';
+import logo from '../../../assets/images/cloudfix.png';
 
 const Page = (props) => (
-    <>
-        <header> 
-            <nav className="page-layout">
-                <img src={image} />
-            </nav>
-        </header>
-        <main>
-            {props.children}
-        </main>
-    </>
+    <Container>
+        <Grid centered>
+            <Grid.Row >
+                <Image src={logo} />
+                <Link href="/admin"><a>Admin Page</a></Link>
+            </Grid.Row>
+            <Grid.Row>
+                {props.children}
+            </Grid.Row>
+            <Grid.Row>
+                <Footer anything={'Hello World'} />
+            </Grid.Row>
+        </Grid>
+    </Container>
 );
 
 export default Page;

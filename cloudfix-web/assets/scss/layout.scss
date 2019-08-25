@@ -1,0 +1,42 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+@import url(https://fonts.googleapis.com/css?family=Lato&display=swap);
+
+#__next-prerender-indicator {
+  display: none;
+}
+
+.menu {
+  font-family: "Lato", sans-serif;
+  // width: 100%;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // flex-flow: column;
+  div {
+    display: inline-block;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    
+  }
+  nav {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    ul {
+      list-style: none;
+      margin-right: 10em;
+      li {
+        a {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
