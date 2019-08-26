@@ -32,4 +32,7 @@ const nextConfigurations = {
 module.exports = withPlugins([
     [withNextEnv],
     [withImages],
-], nextConfigurations);
+], {
+    ...nextConfigurations,
+    distDir: '../dist'
+});
