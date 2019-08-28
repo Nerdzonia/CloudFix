@@ -4,30 +4,27 @@ import {
   Divider,
   Input,
   Form,
-  TextArea,
+  Icon,
+  Label,
+  Select,
   Breadcrumb,
   Button
 } from "semantic-ui-react";
 
-const TicketForm = props => {
+const AdminLogin = props => {
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={10}>
         <Grid.Row>
           <Breadcrumb>
-            <Breadcrumb.Section link active>
-              Home
-            </Breadcrumb.Section>
-            <Breadcrumb.Divider icon="right angle" />
+            <Breadcrumb.Section link>Home</Breadcrumb.Section>
+            <Breadcrumb.Divider icon='right angle' />
+            <Breadcrumb.Section active>Administrador</Breadcrumb.Section>
           </Breadcrumb>
         </Grid.Row>
         <Grid.Row>
           <Header as="h1" textAlign="center">
-            Solicitar Ticket
-            <Header.Subheader>
-              Para solicitar um ticket, é necessário que informe seus dados, e
-              depois descrever o problema.
-            </Header.Subheader>
+            Logar com Administrador
           </Header>
           <Divider />
         </Grid.Row>
@@ -38,40 +35,31 @@ const TicketForm = props => {
               <Grid stackable divided="vertically" columns={1}>
                 <Grid.Row>
                   <Grid.Column>
-                    <Header size="medium">Dados Pessoais</Header>
+                    <Header size="medium">Dados do Administrador</Header>
                     <Divider />
                     <Grid.Row>
-                      <Header size="small">Nome: </Header>
+                      <Header size="small">Usuário: </Header>
+
                       <Input
                         icon="user outline"
                         iconPosition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
-                        placeholder="Ex: Evillyn da Silva Oliveira..."
+                        placeholder="Ex: admin..."
                       />
-                      <Header size="small">Email: </Header>
+
+                      <Header size="small">Senha: </Header>
+
                       <Input
-                        icon="at"
+                        icon="unlock alternate"
                         iconPosition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
-                        placeholder="Ex: evillyndsoliveiras@gmail.com..."
-                      />
+                        placeholder="Ex: *****"
+                      ></Input>
                     </Grid.Row>
-                  </Grid.Column>
-                </Grid.Row>
-                <Header size="medium">Detalhes sobre a Solicitação</Header>
-                <Grid.Row>
-                  <Grid.Column>
-                    <Header size="small">Descrição: </Header>
-                    <TextArea
-                      icon="comment alternate outline"
-                      iconPosition="left"
-                      react-textarea-autosize
-                      placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
-                    />
                   </Grid.Column>
                   <Grid.Column>
                     <Button.Group floated="right">
@@ -79,7 +67,7 @@ const TicketForm = props => {
                       <Button.Or text="ou" />
                       <Button
                         positive
-                        content="Solicitar Ticket"
+                        content="Entrar como Admin"
                         icon="check"
                         labelPosition="right"
                       ></Button>
@@ -94,4 +82,4 @@ const TicketForm = props => {
     </Grid>
   );
 };
-export default TicketForm;
+export default AdminLogin;
