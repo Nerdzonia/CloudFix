@@ -65,6 +65,15 @@ const TicketForm = props => {
                 <Header size="medium">Detalhes sobre a Solicitação</Header>
                 <Grid.Row>
                   <Grid.Column>
+                      <Header size="small">Sistema: </Header>
+                      <Input
+                        icon="computer"
+                        iconPosition="left"
+                        fluid
+                        label={{ icon: "asterisk" }}
+                        labelPosition="right corner"
+                        placeholder="Ex: Sanmiti..."
+                      />
                     <Header size="small">Descrição: </Header>
                     <TextArea
                       icon="comment alternate outline"
