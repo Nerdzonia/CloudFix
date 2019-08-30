@@ -1,14 +1,20 @@
 import Link from 'next/link';
-import { Divider } from 'semantic-ui-react';
+import { Divider, Grid } from 'semantic-ui-react';
+
+import PageLayout from '../components/layout/page'
 
 
 const Admin = () => {
 
-    return(
-        <div>
-            <Link href="/"><a>Ticket</a></Link>
-            <Divider />
-        </div>
+    return (
+        <PageLayout>
+            <Grid>
+                <Grid.Row>
+                    <Link href="/"><a>Ticket</a></Link>
+                    <Divider />
+                </Grid.Row>
+            </Grid>
+        </PageLayout>
     )
 }
 
