@@ -1,16 +1,16 @@
-import { Container } from "semantic-ui-react";
+import { Container, Grid } from "semantic-ui-react";
+
 import HeaderC from "../shared-components/header/header";
 import Footer from "../shared-components/footer/footer";
-import AdminLogin from "../admin/adminLogin";
-import TicketForm from "../ticket/ticketForm/ticketForm";
-
 
 const Page = props => (
   <Container>
-    <HeaderC></HeaderC>
-    {/* <AdminLogin></AdminLogin> */}
-    <TicketForm></TicketForm>
-    {/* {props.children} */}
+    <Grid centered >
+      <Grid.Row>
+        <HeaderC />
+      </Grid.Row>
+    </Grid>
+    {props.children}
     <Footer anything={"Footer"} />
   </Container>
 );
