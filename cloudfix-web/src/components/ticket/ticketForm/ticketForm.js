@@ -44,7 +44,7 @@ const TicketForm = props => {
                       <Header size="small">Nome: </Header>
                       <Input
                         icon="user outline"
-                        iconPosition="left"
+                        iconposition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
@@ -53,7 +53,7 @@ const TicketForm = props => {
                       <Header size="small">Email: </Header>
                       <Input
                         icon="at"
-                        iconPosition="left"
+                        iconposition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
@@ -68,7 +68,7 @@ const TicketForm = props => {
                       <Header size="small">Sistema: </Header>
                       <Input
                         icon="computer"
-                        iconPosition="left"
+                        iconposition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
@@ -77,8 +77,8 @@ const TicketForm = props => {
                     <Header size="small">Descrição: </Header>
                     <TextArea
                       icon="comment alternate outline"
-                      iconPosition="left"
-                      react-textarea-autosize
+                      iconposition="left"
+                      react-textarea-autosize="true"
                       placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
                     />
                   </Grid.Column>
