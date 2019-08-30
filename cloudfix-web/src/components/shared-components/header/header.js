@@ -7,7 +7,7 @@ import MenuExampleStackable from "../../shared-components/menu/menu.js";
 
 const HeaderC = props => {
   return (
-    <Grid>
+    <Grid centered>
       <Grid.Row>
         <Grid stackable columns={3}>
           <Grid.Column only="computer" width={4}></Grid.Column>
@@ -20,17 +20,15 @@ const HeaderC = props => {
             <Header as="h5">
               <Icon name="settings" />
               <Header.Content>
-                <Link to="#">Admin area</Link>
+                <Link href="/admin"><a>Admin area</a></Link>
               </Header.Content>
             </Header>
           </Grid.Column>
         </Grid>
       </Grid.Row>
       <Grid.Row>
-      <MenuExampleStackable></MenuExampleStackable>
-        
+      <MenuExampleStackable />
       </Grid.Row>
-
     </Grid>
   );
 };
