@@ -6,6 +6,7 @@ const Joi = require('@hapi/joi');
 const User = require('../models/user');
 const generateToken = require('../utils/jwt');
 const convertToHtmlAndSendMail = require('../modules/ejs');
+const checkTokenJwt = require('../middlewares/auth');
 
 const router = express.Router();
 const HASH = process.env.HASH || 'DefaultHash';
@@ -14,6 +15,7 @@ router.post('/register', async (req, res) => {
     try {
         const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
+            name: Joi.string().required(),
             password: Joi.string().required()
         });
 
@@ -45,12 +47,13 @@ router.post('/authenticate', async (req, res) => {
     try {
         const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
-            password: Joi.string().require()
+            password: Joi.string().required()
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
                 return res.status(400).send({ error: `Validate error ${err}` });
+                
             const { email, password } = result;
 
             const user = await User.findOne({ email }).select('+password');
@@ -62,7 +65,9 @@ router.post('/authenticate', async (req, res) => {
                 return res.status(400).send({ error: 'Invalid password!' });
 
             user.password = undefined;
+
             const token = await generateToken({ id: user.id }, HASH);
+
             return res.send({
                 user,
                 token,
@@ -123,9 +128,9 @@ router.post('/change_password', async (req, res) => {
 router.post('/reset_password', async (req, res) => {
 
     const schema = Joi.object().keys({
-        email: Joi.string().trim().email().require(),
-        token: Joi.string().require(),
-        password: Joi.string()
+        email: Joi.string().trim().email().required(),
+        token: Joi.string().required(),
+        password: Joi.string().required()
     });
 
     Joi.validate(req.body, schema, async (err, result) => {
@@ -157,6 +162,11 @@ router.post('/reset_password', async (req, res) => {
             res.status(400).send({ error: 'Cannot reset password' })
         }
     });
+});
+
+router.get('/checkJwt', checkTokenJwt ,async (req, res) => {
+    const user = await User.findById(req.userId);
+    res.send(user)
 });
 
 module.exports = app => app.use('/auth', router);

@@ -16,7 +16,6 @@ router.post('/newTicket', async (req, res) => {
             title: Joi.string().min(5).required(),
             message: Joi.string().min(5).required(),
             system: Joi.string().required()
-
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
