@@ -2,6 +2,7 @@ import { Container, Grid } from "semantic-ui-react";
 
 import HeaderC from "../shared-components/header/header";
 import Footer from "../shared-components/footer/footer";
+import TicketList from "../ticket/ticketList/ticketList";
 
 const Page = props => (
   <Container>
@@ -10,7 +11,8 @@ const Page = props => (
         <HeaderC />
       </Grid.Row>
     </Grid>
-    {props.children}
+    <TicketList></TicketList>
+    {/*props.children*/}
     <Footer anything={"Footer"} />
   </Container>
 );

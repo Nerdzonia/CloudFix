@@ -12,7 +12,7 @@ import {
 const TicketForm = props => {
   return (
     <Grid container centered columns={1}>
-      <Grid.Column mobile={16} tablet={10} computer={10}>
+      <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
           <Breadcrumb>
             <Breadcrumb.Section link active>
@@ -78,7 +78,7 @@ const TicketForm = props => {
                     <TextArea
                       icon="comment alternate outline"
                       iconposition="left"
-                      react-textarea-autosize="true"
+                      /*react-textarea-autosize="true"*/
                       placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
                     />
                   </Grid.Column>
