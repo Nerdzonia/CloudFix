@@ -5,40 +5,39 @@ import { Menu } from "semantic-ui-react";
 import logo from "../../../../assets/images/cloudfix.png";
 
 export default class MenuExampleStackable extends Component {
-    state = {};
+    state = {
+        activeItem: ''
+    };
 
-    // handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+    handleItemClick = (e, { name }) => {
+        if(name === 'home')
+            Router.push('/')
+        else if (name === 'tickets')
+            Router.push('/admin')
+        this.setState({ activeItem: name })
+    };
 
     render() {
         const { activeItem } = this.state;
 
-        return ( <
-            Menu stackable >
-            <
-            Menu.Item >
-            <
-            img src = { logo }
-            /> <
-            /Menu.Item>
+        return (
+            <Menu stackable >
+                <Menu.Item onClick={() => Router.push('/')} >
+                    <img src={logo} />
+                </Menu.Item>
 
-            <
-            Menu.Item name = "features"
-            active = { activeItem === "features" }
-            // onClick={this.handleItemClick}
-            onClick = {
-                () => Router.push('/') } >
-            Solicitar Ticket <
-            /Menu.Item>
+                <Menu.Item name="home"
+                    active={activeItem === "home"}
+                    onClick={this.handleItemClick.bind(this)}>
+                    Solicitar Ticket
+                </Menu.Item>
 
-            <
-            Menu.Item name = "testimonials"
-            active = { activeItem === "testimonials" }
-            // onClick={this.handleItemClick}
-            onClick = {
-                () => Router.push('/admin') } >
-            Acompanhar Tickets <
-            /Menu.Item> <
-            /Menu>
+                <Menu.Item name="tickets"
+                    active={activeItem === "tickets"}
+                    onClick={this.handleItemClick.bind(this)}>
+                    Acompanhar Ticket
+                </Menu.Item>
+            </Menu>
         );
     }
 }

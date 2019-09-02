@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Grid,
   Header,
@@ -10,12 +11,56 @@ import {
 } from "semantic-ui-react";
 
 const TicketForm = props => {
+  const ImageUpload = React.createRef();
+
+  const [input, setInput] = useState({
+    email: '',
+    name: '',
+    title: '',
+    system: '',
+    image: '',
+    message: ''
+  });
+
+  const [image , setImage] = useState('');
+
+  const sendTicket = () => {
+
+  }
+
+  const handleImage = (e) => {
+    let data = new FormData();
+    data.append('image', e.target.files[0]);
+    setInput({...input, image: data});
+
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      setImage(e.target.result);
+    }
+    reader.readAsDataURL(e.target.files[0]);
+  }
+
+  const style = {
+    imageContent: {
+      width: 200,
+      height: 200,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      border: '1px dashed black',
+      backgroundSize: '100%',
+      backgroundRepeat: 'no-repeat',
+      backgroundImage: `url(${image})`
+    }
+  }
+
   return (
     <Grid container centered columns={1}>
+      {console.log(input.image)}
       <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
           <Breadcrumb>
-            <Breadcrumb.Section link active>
+            <Breadcrumb.Section active>
               Home
             </Breadcrumb.Section>
             <Breadcrumb.Divider icon="right angle" />
@@ -34,53 +79,78 @@ const TicketForm = props => {
 
         <Grid.Row>
           <Grid.Column>
-            <Form>
+            <Form onSubmit={sendTicket}>
               <Grid stackable divided="vertically" columns={1}>
                 <Grid.Row>
                   <Grid.Column>
                     <Header size="medium">Dados Pessoais</Header>
                     <Divider />
                     <Grid.Row>
-                      <Header size="small">Nome: </Header>
-                      <Input
-                        icon="user outline"
-                        iconposition="left"
-                        fluid
-                        label={{ icon: "asterisk" }}
-                        labelPosition="right corner"
-                        placeholder="Ex: Evillyn da Silva Oliveira..."
-                      />
-                      <Header size="small">Email: </Header>
-                      <Input
-                        icon="at"
-                        iconposition="left"
-                        fluid
-                        label={{ icon: "asterisk" }}
-                        labelPosition="right corner"
-                        placeholder="Ex: evillyndsoliveiras@gmail.com..."
-                      />
+                      <Form.Field required>
+                        <label size="small">Nome: </label>
+                        <Input
+                          icon="user outline"
+                          iconPosition="left"
+                          fluid
+                          label={{ icon: "asterisk" }}
+                          labelPosition="right corner"
+                          placeholder="Ex: Exemplo dos exemplos..."
+                        />
+                      </Form.Field>
+                      <Form.Field required>
+                        <label size="small">Email: </label>
+                        <Input
+                          icon="at"
+                          iconPosition="left"
+                          fluid
+                          label={{ icon: "asterisk" }}
+                          labelPosition="right corner"
+                          placeholder="Ex: exemplo@exemplo.com..."
+                        />
+                      </Form.Field>
                     </Grid.Row>
                   </Grid.Column>
                 </Grid.Row>
                 <Header size="medium">Detalhes sobre a Solicitação</Header>
                 <Grid.Row>
                   <Grid.Column>
-                      <Header size="small">Sistema: </Header>
+                    <Form.Field required>
+                      <label size="small">Assunto: </label>
                       <Input
-                        icon="computer"
-                        iconposition="left"
+                        icon="pencil alternate"
+                        iconPosition="left"
                         fluid
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
-                        placeholder="Ex: Sanmiti..."
+                        placeholder="Ex: Titulo..."
                       />
-                    <Header size="small">Descrição: </Header>
-                    <TextArea
-                      icon="comment alternate outline"
-                      iconposition="left"
-                      /*react-textarea-autosize="true"*/
-                      placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
-                    />
+                    </Form.Field>
+                    <Form.Field required>
+                      <label size="small">Sistema: </label>
+                      <Input
+                        icon="computer"
+                        iconPosition="left"
+                        fluid
+                        label={{ icon: "asterisk" }}
+                        labelPosition="right corner"
+                        placeholder="Ex: handhead..."
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label size="small">Imagem do erro: </label>
+                      <div style={style.imageContent}>
+                        <Button icon="upload" color="blue" onClick={() => ImageUpload.current.click()} />
+                      </div>
+                      <input type="file" ref={ImageUpload} onChange={(e) => handleImage(e)} style={{ display: 'none' }} />
+                    </Form.Field>
+                    <Form.Field required>
+                      <label size="small">Descrição: </label>
+                      <TextArea
+                        icon="comment alternate outline"
+                        iconposition="left"
+                        placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
+                      />
+                    </Form.Field>
                   </Grid.Column>
                   <Grid.Column>
                     <Button.Group floated="right">
@@ -103,4 +173,6 @@ const TicketForm = props => {
     </Grid>
   );
 };
+
+
 export default TicketForm;

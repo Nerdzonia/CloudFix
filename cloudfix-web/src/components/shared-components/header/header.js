@@ -1,34 +1,27 @@
-import { Grid, Image, Icon, Header, Menu, Segment } from "semantic-ui-react";
+import Link from "next/link";
+import { Grid, Image, Icon, Header } from "semantic-ui-react";
 
 import logo from "../../../../assets/images/cloudfix.png";
-import Link from "next/link";
-
-import MenuExampleStackable from "../../shared-components/menu/menu.js"; 
 
 const HeaderC = props => {
   return (
-    <Grid centered>
-      <Grid.Row>
-        <Grid stackable columns={3}>
-          <Grid.Column only="computer" width={4}></Grid.Column>
+    <Grid centered stackable columns={3} >
+          <Grid.Column only="computer" width={4} />
 
           <Grid.Column width={8}>
-            <Image centered src={logo} width="175px" />
+            <Link href="/">
+              <a><Image centered src={logo} width="255px" /></a>
+            </Link>
           </Grid.Column>
 
           <Grid.Column width={4} verticalAlign="middle">
-            <Header as="h5">
-              <Icon name="settings" />
-              <Header.Content>
-                <Link href="/admin"><a>Admin area</a></Link>
-              </Header.Content>
-            </Header>
+              <Header as="h5">
+                <Icon name="settings" />
+                <Header.Content>
+                  <Link href="/admin"><a>Admin area</a></Link>
+                </Header.Content>
+              </Header>
           </Grid.Column>
-        </Grid>
-      </Grid.Row>
-      <Grid.Row>
-      <MenuExampleStackable />
-      </Grid.Row>
     </Grid>
   );
 };

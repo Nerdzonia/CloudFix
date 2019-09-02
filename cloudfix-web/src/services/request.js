@@ -9,7 +9,7 @@ const axiosRequest = axios.create({
         'Content-type': 'application/json',
         Accept: 'application/json'
     }
-})
+});
 
 axiosRequest.interceptors.request.use(
     config => {
@@ -36,4 +36,4 @@ axiosRequest.interceptors.response.use(
     }
 );
 
-export default axiosRequest;
+export default new axiosRequest();

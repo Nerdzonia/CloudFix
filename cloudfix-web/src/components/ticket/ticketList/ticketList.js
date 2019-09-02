@@ -35,7 +35,7 @@ const TicketList = props => {
         </Grid.Row>
 
         <Grid.Row>
-            <TicketTable></TicketTable>
+            <TicketTable />
         </Grid.Row>
 
       </Grid.Column>
