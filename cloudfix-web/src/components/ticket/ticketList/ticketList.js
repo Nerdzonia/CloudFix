@@ -3,6 +3,7 @@ import {
   Header,
   Divider,
   Breadcrumb,
+  Input
 } from "semantic-ui-react";
 
 import TicketTable from "../ticketTable.js"
@@ -17,7 +18,7 @@ const TicketList = props => {
               Home
             </Breadcrumb.Section>
             <Breadcrumb.Divider icon="right angle" />
-            <Breadcrumb.Section link active>
+            <Breadcrumb.Section active>
               Tickets
             </Breadcrumb.Section>
           </Breadcrumb>

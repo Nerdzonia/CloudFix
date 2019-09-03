@@ -10,7 +10,7 @@ const HeaderC = props => {
 
           <Grid.Column width={8}>
             <Link href="/">
-              <a><Image centered src={logo} width="255px" /></a>
+              <a><Image centered src={logo} width="200px" /></a>
             </Link>
           </Grid.Column>
 

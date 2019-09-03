@@ -79,12 +79,12 @@ const TicketForm = props => {
 
   const style = {
     imageContent: {
-      width: 200,
-      height: 200,
+      width: 245,
+      height: 198,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      border: '1px dashed black',
+      border: '1px dashed grey',
       backgroundSize: '100%',
       backgroundRepeat: 'no-repeat',
       backgroundImage: `url(${image})`
@@ -129,7 +129,7 @@ const TicketForm = props => {
                           iconPosition="left"
                           fluid
                           placeholder="Ex: Exemplo dos exemplos..."
-                          error={checkInput.name ? {content: 'Porfavor insira seu nome!'} : null}
+                          error={checkInput.name ? {content: 'Por favor, insira seu nome!'} : null}
                           name='name'
                           value={input.name}
                           onChange={handleFildsChange}
@@ -142,7 +142,7 @@ const TicketForm = props => {
                           iconPosition="left"
                           fluid
                           placeholder="Ex: exemplo@exemplo.com..."
-                          error={checkInput.email ? {content: 'Porfavor insira seu email!'} : null}
+                          error={checkInput.email ? {content: 'Por favor, insira seu email!'} : null}
                           name='email'
                           value={input.email}
                           onChange={handleFildsChange}
@@ -163,7 +163,7 @@ const TicketForm = props => {
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
                         placeholder="Ex: Titulo..."
-                        error={checkInput.title ? {content: 'Porfavor insira um assunto!'} : null}
+                        error={checkInput.title ? {content: 'Por favor, insira um assunto!'} : null}
                         name='title'
                         value={input.title}
                         onChange={handleFildsChange}
@@ -178,31 +178,34 @@ const TicketForm = props => {
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
                         placeholder="Ex: handhead..."
-                        error={checkInput.system ? {content: 'Porfavor insira um sistema para relatar o erro!'} : null}
+                        error={checkInput.system ? {content: 'Por favor, insira um sistema para relatar o erro!'} : null}
                         name='system'
                         value={input.system}
                         onChange={handleFildsChange}
                       />
                     </Form.Field>
-                    <Form.Field>
-                      <label size="small">Imagem do erro: </label>
-                      <div style={style.imageContent}>
-                        <Button icon="upload" color="blue" onClick={() => ImageUpload.current.click()} />
-                      </div>
-                      <input type="file" ref={ImageUpload} accept="image/*" onChange={(e) => handleImage(e)} style={{ display: 'none' }} />
-                    </Form.Field>
-                    <Form.Field required>
-                      <label size="small">Descrição: </label>
-                      <Form.TextArea
-                        icon="comment alternate outline"
-                        iconposition="left"
-                        placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
-                        error={checkInput.message ? {content: 'Relate o erro acima!'} : null}
-                        name='message'
-                        value={input.message}
-                        onChange={handleFildsChange}
-                      />
-                    </Form.Field>
+                    <Form.Group>
+                      <Form.Field required width={11} >
+                        <label size="small">Descrição: </label>
+                        <Form.TextArea
+                          style={{ minHeight: 200 }} 
+                          icon="comment alternate outline"
+                          iconposition="left"
+                          placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
+                          error={checkInput.message ? {content: 'Relate o erro acima!'} : null}
+                          name='message'
+                          value={input.message}
+                          onChange={handleFildsChange}
+                        />
+                      </Form.Field>
+                      <Form.Field width={5}>
+                        <label size="small">Imagem do erro: </label>
+                        <div style={style.imageContent}>
+                          <Button basic icon="upload" color="blue" onClick={() => ImageUpload.current.click()} />
+                        </div>
+                        <input type="file" ref={ImageUpload} accept="image/*" onChange={(e) => handleImage(e)} style={{ display: 'none' }} />
+                      </Form.Field>
+                    </Form.Group>
                   </Grid.Column>
                   <Grid.Column>
                     <Button.Group floated="right">
