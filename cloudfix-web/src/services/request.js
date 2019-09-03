@@ -6,7 +6,7 @@ const baseURL = process.env.URL || 'localhost:3000';
 const axiosRequest = axios.create({
     baseURL,
     headers: {
-        'Content-type': 'application/json',
+        'Content-Type': 'application/json',
         Accept: 'application/json'
     }
 });
@@ -36,4 +36,4 @@ axiosRequest.interceptors.response.use(
     }
 );
 
-export default new axiosRequest();
+export default axiosRequest;
