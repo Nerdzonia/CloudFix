@@ -1,5 +1,7 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
+const multer = require('multer');
+const upload = multer();
 
 const convertToHtmlAndSendMail = require('../modules/ejs');
 
@@ -8,19 +10,20 @@ const Ticket = require('../models/ticket');
 
 const router = express.Router();
 
-router.post('/newTicket', async (req, res) => {
+router.post('/newTicket', upload.single('image'), async (req, res) => {
     try {
         const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
             name: Joi.string().required(),
             title: Joi.string().min(5).required(),
+            system: Joi.string().required(),
+            image: Joi.binary(),
             message: Joi.string().min(5).required(),
-            system: Joi.string().required()
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
-                res.send({ error: `An error has ocurred ${err}` });
+                return res.send({ error: `An error has ocurred ${err}` });
 
             const { email, name, title, message, system } = result;
 
@@ -32,7 +35,7 @@ router.post('/newTicket', async (req, res) => {
             });
 
             if (await Client.findOne({ email })) {
-                const tickets = await Client.findOne({ email }, async (err, doc) => {
+                await Client.findOne({ email }, async (err, doc) => {
                     if (err) throw err;
 
                     doc.tickets.push(createTicket);
@@ -53,32 +56,32 @@ router.post('/newTicket', async (req, res) => {
                     }
 
                     await convertToHtmlAndSendMail(data, mailer);
+
+                    return res.send({ ticket });
                 });
-
-                return res.send({ response: tickets });
+            } else {
+                const client = new Client({
+                    email,
+                    tickets: createTicket._id
+                });
+    
+                await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
+                const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
+    
+                const data = {
+                    link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                }
+    
+                const mailer = {
+                    to: email,
+                    subject: 'Suporte handhead',
+                    from: 'handhead@gmail.com',
+                }
+    
+                await convertToHtmlAndSendMail(data, mailer);
+    
+                return res.send({ ticket });
             }
-
-            const client = new Client({
-                email,
-                tickets: createTicket._id
-            });
-
-            const clientSuccess = await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
-            const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
-
-            const data = {
-                link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
-            }
-
-            const mailer = {
-                to: email,
-                subject: 'Suporte handhead',
-                from: 'handhead@gmail.com',
-            }
-
-            await convertToHtmlAndSendMail(data, mailer);
-
-            return res.send({ clientSuccess });
         });
     } catch (error) {
         return res.status(400).send({ error: `Failed to send ticket: ${error}` });

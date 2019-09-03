@@ -1,17 +1,22 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 async function express(){
     try{
+        // MIDDLEWARES
+        app.use(cors({
+            exposedHeaders: ['Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorizarion'],
+            methods: ['GET', 'POST', 'PUT',]
+        }));
+        app.use(bodyParser.urlencoded({extended: true}));
+        app.use(bodyParser.json());
+        
         const PORT = process.env.PORT || '8080';
         
         // DATABASE
         const { dbConnect } = require('./database');
         await dbConnect();
-        
-        // MIDDLEWARES
-        app.use(bodyParser.urlencoded({extended: true}));
-        app.use(bodyParser.json());
         
         // API ROUTES
         require('../routes')(app);
