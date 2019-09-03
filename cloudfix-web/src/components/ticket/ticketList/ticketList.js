@@ -1,19 +1,15 @@
 import {
-    Grid,
-    Header,
-    Divider,
-    Input,
-    Form,
-    TextArea,
-    Breadcrumb,
-    Button
+  Grid,
+  Header,
+  Divider,
+  Breadcrumb,
 } from "semantic-ui-react";
 
 import TicketTable from "../ticketTable.js"
 
 const TicketList = props => {
-    return (
-        <Grid container centered columns={1}>
+  return (
+    <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
           <Breadcrumb>
@@ -35,12 +31,12 @@ const TicketList = props => {
         </Grid.Row>
 
         <Grid.Row>
-            <TicketTable />
+          <TicketTable />
         </Grid.Row>
 
       </Grid.Column>
     </Grid>
-    );
+  );
 };
 
 

@@ -3,12 +3,12 @@ import {
   Grid,
   Header,
   Divider,
-  Input,
   Form,
-  TextArea,
   Breadcrumb,
   Button
 } from "semantic-ui-react";
+
+import ClientRequestor from '../../../services/resources/client';
 
 const TicketForm = props => {
   const ImageUpload = React.createRef();
@@ -38,12 +38,7 @@ const TicketForm = props => {
 
   const handleImage = (e) => {
     if (e.target.files[0]) {
-      let data = new FormData();
-      data.append('image', {
-        type: 'image',
-        uri: e.target.files[0]
-      });
-      setInput({ ...input, image: data });
+      setInput({ ...input, image: e.target.files[0] });
 
       let reader = new FileReader();
       reader.onload = function (e) {
@@ -53,7 +48,7 @@ const TicketForm = props => {
     }
   }
 
-  const sendTicket = () => {
+  const sendTicket = async () => {
     let check = {};
 
     Object.keys(input).forEach(element => {
@@ -70,8 +65,16 @@ const TicketForm = props => {
       return check[element] === false;
     });
     
-    if(validateInputs)
-      console.log(input);
+    if(validateInputs){
+      const form = new FormData();
+      Object.keys(input).forEach(element => {
+        form.append(element, input[element]);
+      });
+  
+      let { data } = await ClientRequestor.sendTicket(form);
+      //redirect to ticket link
+      console.log(data);
+    }
   }
 
   const style = {
