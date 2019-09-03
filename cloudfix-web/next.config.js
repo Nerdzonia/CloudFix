@@ -1,10 +1,6 @@
 const withPlugins = require('next-compose-plugins');
-// const withImages = require('next-images');
-const nextEnv = require('next-env');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const dotenvload = require('dotenv-load');
-dotenvload();
-const withNextEnv = nextEnv();
+const Dotenv = require('dotenv-webpack');
 
 //Configure webpack plugins
 const nextConfigurations = {
@@ -38,14 +34,19 @@ const nextConfigurations = {
             new MiniCssExtractPlugin({
                 filename: '[name]__[hash].css'
             }),
+        );
+        
+        config.plugins.push(
+            new Dotenv(),
         )
+
         return config;
     }
 
 }
 
 module.exports = withPlugins([
-    [withNextEnv],
+    // [withNextEnv],
     // [withImages],
 ], {
     ...nextConfigurations,
