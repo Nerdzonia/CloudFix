@@ -1,12 +1,7 @@
-import {
-  Grid,
-  Header,
-  Divider,
-  Breadcrumb,
-  Input
-} from "semantic-ui-react";
+import { Grid, Header, Divider, Breadcrumb, Menu, Input } from "semantic-ui-react";
 
-import TicketTable from "../ticketTable.js"
+import TicketTable from "../ticketTable.js";
+import Link from "next/link";
 
 const TicketList = props => {
   return (
@@ -14,13 +9,11 @@ const TicketList = props => {
       <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
           <Breadcrumb>
-            <Breadcrumb.Section link>
-              Home
-            </Breadcrumb.Section>
+            <Link href="/">
+              <Breadcrumb.Section link>Home </Breadcrumb.Section>
+            </Link>
             <Breadcrumb.Divider icon="right angle" />
-            <Breadcrumb.Section active>
-              Tickets
-            </Breadcrumb.Section>
+            <Breadcrumb.Section active>Tickets</Breadcrumb.Section>
           </Breadcrumb>
         </Grid.Row>
 
@@ -28,17 +21,15 @@ const TicketList = props => {
           <Header as="h1" textAlign="center">
             Tickets
           </Header>
-          <Divider />
+          <Divider/>
         </Grid.Row>
 
         <Grid.Row>
           <TicketTable />
         </Grid.Row>
-
       </Grid.Column>
     </Grid>
   );
 };
-
 
 export default TicketList;
