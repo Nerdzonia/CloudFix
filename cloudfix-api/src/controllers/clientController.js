@@ -1,7 +1,12 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
 const multer = require('multer');
-const upload = multer();
+const upload = multer({
+    limits:{
+        files:5,
+        fileSize: 1024 * 1024 * 2
+    }
+}).array('image');
 
 const convertToHtmlAndSendMail = require('../modules/ejs');
 
@@ -10,14 +15,14 @@ const Ticket = require('../models/ticket');
 
 const router = express.Router();
 
-router.post('/newTicket', upload.single('image'), async (req, res) => {
+router.post('/newTicket', upload, async (req, res) => {
     try {
         const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
             name: Joi.string().required(),
             title: Joi.string().min(5).required(),
             system: Joi.string().required(),
-            image: Joi.binary(),
+            image: Joi.any(),
             message: Joi.string().min(5).required(),
         });
 
@@ -34,9 +39,15 @@ router.post('/newTicket', upload.single('image'), async (req, res) => {
                 system
             });
 
+            const mailer = {
+                to: email,
+                subject: 'Suporte handhead',
+                from: 'handhead@gmail.com',
+            }
+
             if (await Client.findOne({ email })) {
                 await Client.findOne({ email }, async (err, doc) => {
-                    if (err) throw err;
+                    if (err) return res.status(400).send({error: `error on send ticket ${err}`});
 
                     doc.tickets.push(createTicket);
 
@@ -44,19 +55,14 @@ router.post('/newTicket', upload.single('image'), async (req, res) => {
                         if (err) throw err;
                     });
 
-                    const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Dont create a new Ticket` }));
+                    const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({error: `Erro on send ticket ${err}`}))
 
                     const data = {
                         link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
                     }
 
-                    const mailer = {
-                        to: email,
-                        from: 'handhead@gmail.com',
-                    }
-
                     await convertToHtmlAndSendMail(data, mailer);
-
+                    
                     return res.send({ ticket });
                 });
             } else {
@@ -70,12 +76,6 @@ router.post('/newTicket', upload.single('image'), async (req, res) => {
     
                 const data = {
                     link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
-                }
-    
-                const mailer = {
-                    to: email,
-                    subject: 'Suporte handhead',
-                    from: 'handhead@gmail.com',
                 }
     
                 await convertToHtmlAndSendMail(data, mailer);

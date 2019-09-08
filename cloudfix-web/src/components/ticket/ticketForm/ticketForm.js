@@ -5,7 +5,8 @@ import {
   Divider,
   Form,
   Breadcrumb,
-  Button
+  Button,
+  Message
 } from "semantic-ui-react";
 
 import ClientRequestor from '../../../services/resources/client';
@@ -18,11 +19,11 @@ const TicketForm = props => {
     name: '',
     title: '',
     system: '',
-    image: '',
+    image: [],
     message: ''
   });
 
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState(null);
 
   const [checkInput, setCheckInput] = useState({
     email: false,
@@ -38,13 +39,21 @@ const TicketForm = props => {
 
   const handleImage = (e) => {
     if (e.target.files[0]) {
-      setInput({ ...input, image: e.target.files[0] });
+      let file = e.target.files[0];
+      
+      if(file.size >= 2097152)
+        return alert('Porfavor insira um arquivo menor que 2MB');
+      
+      if(input.image.length >= 5)
+        return alert('Maximo de arquivos alcançados');
 
+      setInput({ ...input, image: input.image ? [file, ...input.image] : [file] });
+        
       let reader = new FileReader();
       reader.onload = function (e) {
         setImage(e.target.result);
       }
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   }
 
@@ -66,16 +75,19 @@ const TicketForm = props => {
     });
     
     if(validateInputs){
-      const form = new FormData();
-      Object.keys(input).forEach(element => {
-        form.append(element, input[element]);
-      });
-  
-      let { data } = await ClientRequestor.sendTicket(form);
+      let data = await ClientRequestor.sendTicket(input);
+
       //redirect to ticket link
       console.log(data);
     }
   }
+  
+  const ArchiveBox = () => (
+    <Message>
+      <Message.Header>Itens adicionados (Maximo de arquivos 5, tamanho ate 2MB)</Message.Header>
+      <Message.List items={input.image.map((image, i) => <div key={i}><strong>{i+1} == </strong> {image.name}</div>)} />
+    </Message>
+  )
 
   const style = {
     imageContent: {
@@ -87,7 +99,7 @@ const TicketForm = props => {
       border: '1px dashed grey',
       backgroundSize: '100%',
       backgroundRepeat: 'no-repeat',
-      backgroundImage: `url(${image})`
+      backgroundImage: `url(${image || ''})`
     }
   }
 
@@ -203,11 +215,12 @@ const TicketForm = props => {
                         <div style={style.imageContent}>
                           <Button basic icon="upload" color="blue" onClick={() => ImageUpload.current.click()} />
                         </div>
-                        <input type="file" ref={ImageUpload} accept="image/*" onChange={(e) => handleImage(e)} style={{ display: 'none' }} />
+                        <input type="file" ref={ImageUpload} accept="image/*, .pdf, .doc, video/*" onChange={(e) => handleImage(e)} style={{ display: 'none' }} />
                       </Form.Field>
                     </Form.Group>
                   </Grid.Column>
                   <Grid.Column>
+                  {image ? <ArchiveBox /> : null}
                     <Button.Group floated="right">
                       <Button>Cancelar</Button>
                       <Button.Or text="ou" />
