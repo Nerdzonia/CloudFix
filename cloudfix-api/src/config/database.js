@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 async function dbConnect(){
     try{
         const connection = process.env.DATABASE_CONNECTION_URI || 'mongodb://localhost:27017/Cloudfix';
-        
         mongoose.Promise = global.Promise;
         await mongoose.connect(
             connection, 
@@ -12,7 +11,7 @@ async function dbConnect(){
                 useCreateIndex: true,
                 useFindAndModify: false,
             }, 
-            () => console.log(`Database connected sucessfully!`)
+            (err) => console.log(`Database status ==> ${err === null ? 'Connected in database' : err}`)
         );
         
         return mongoose;
