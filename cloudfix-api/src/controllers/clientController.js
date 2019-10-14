@@ -88,6 +88,41 @@ router.post('/newTicket', upload, async (req, res) => {
     }
 });
 
+router.post('/updateTicket', upload, async (req, res) => {
+    try{
+        const schema = Joi.object().keys({
+            id: Joi.strict().required(),
+            name: Joi.string().required(),
+            title: Joi.string().min(5).required(),
+            system: Joi.string().required(),
+            image: Joi.any(),
+            message: Joi.string().min(5).required(),
+        });
+
+        Joi.validate(req.body, schema, (err, result) => {
+            if(err)
+                return res.status(400).send({error: `Error on search ticket ${err}`});    
+
+            Ticket.findById(result.id, async (err, doc) => {
+                if(err)
+                    return res.status(400).send({error: `Error on search ticket ${err}`});
+    
+                Object.assign(doc, result);
+                
+                doc.save((err, doc) =>{
+                    if(err)
+                        return res.status(400).send({error: `Error on atualize ticket ${err}`});
+
+                    return res.send(doc);
+                });
+            });
+        });
+        
+    }catch(error){
+        return res.status(400).send({error: `Erro upload ticket ${error}`});
+    }    
+});
+
 router.get('/listAll', async (req, res) => {
     try {
         const clients = await Client.find().populate('tickets');
