@@ -63,4 +63,15 @@ router.post('/addMessage/:id', async (req, res) => {
     }
 });
 
+router.get('/listAll', async (req, res) => {
+    try {
+        listAllTicket(res, {
+            path: 'tickets',
+            populate: 'chat'
+        });
+    } catch (error) {
+        return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
+    }
+});
+
 module.exports = app => app.use('/ticket', router);

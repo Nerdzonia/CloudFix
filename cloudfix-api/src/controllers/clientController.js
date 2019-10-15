@@ -8,10 +8,10 @@ const upload = multer({
     }
 }).array('image');
 
-const convertToHtmlAndSendMail = require('../modules/ejs');
-
 const Client = require('../models/client');
-const Ticket = require('../models/ticket');
+
+const { updateTicket, saveTicket } = require('../repository/ticket');
+const { listClientTicketById, listAllClients } = require('../repository/client');
 
 const router = express.Router();
 
@@ -30,58 +30,7 @@ router.post('/newTicket', upload, async (req, res) => {
             if (err)
                 return res.send({ error: `An error has ocurred ${err}` });
 
-            const { email, name, title, message, system } = result;
-
-            const createTicket = new Ticket({
-                title,
-                message,
-                name,
-                system
-            });
-
-            const mailer = {
-                to: email,
-                subject: 'Suporte handhead',
-                from: 'handhead@gmail.com',
-            }
-
-            if (await Client.findOne({ email })) {
-                await Client.findOne({ email }, async (err, doc) => {
-                    if (err) return res.status(400).send({error: `error on send ticket ${err}`});
-
-                    doc.tickets.push(createTicket);
-
-                    await doc.save((err) => {
-                        if (err) throw err;
-                    });
-
-                    const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({error: `Erro on send ticket ${err}`}))
-
-                    const data = {
-                        link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
-                    }
-
-                    await convertToHtmlAndSendMail(data, mailer);
-                    
-                    return res.send({ ticket });
-                });
-            } else {
-                const client = new Client({
-                    email,
-                    tickets: createTicket._id
-                });
-    
-                await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
-                const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
-    
-                const data = {
-                    link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
-                }
-    
-                await convertToHtmlAndSendMail(data, mailer);
-    
-                return res.send({ ticket });
-            }
+            saveTicket(res, result)
         });
     } catch (error) {
         return res.status(400).send({ error: `Failed to send ticket: ${error}` });
@@ -102,22 +51,9 @@ router.post('/updateTicket', upload, async (req, res) => {
         Joi.validate(req.body, schema, (err, result) => {
             if(err)
                 return res.status(400).send({error: `Error on search ticket ${err}`});    
-
-            Ticket.findById(result.id, async (err, doc) => {
-                if(err)
-                    return res.status(400).send({error: `Error on search ticket ${err}`});
-    
-                Object.assign(doc, result);
                 
-                doc.save((err, doc) =>{
-                    if(err)
-                        return res.status(400).send({error: `Error on atualize ticket ${err}`});
-
-                    return res.send(doc);
-                });
-            });
+            updateTicket(result, res);
         });
-        
     }catch(error){
         return res.status(400).send({error: `Erro upload ticket ${error}`});
     }    
@@ -125,8 +61,7 @@ router.post('/updateTicket', upload, async (req, res) => {
 
 router.get('/listAll', async (req, res) => {
     try {
-        const clients = await Client.find().populate('tickets');
-        return res.send(clients);
+        listAllClients(res);
     } catch (error) {
         return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
     }
@@ -134,8 +69,9 @@ router.get('/listAll', async (req, res) => {
 
 router.get('/listTickets/:id', async (req, res) => {
     try {
-        const client = await Client.findById(req.params.id).populate('tickets');
-        return res.send(client);
+        listClientTicketById(res, req.params.id, {
+            path: 'tickets'
+        });
     } catch (error) {
         return res.status(400).send({ error: `Could't search the ticket into client. Error: ${error}` });
     }
