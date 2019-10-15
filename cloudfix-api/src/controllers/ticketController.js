@@ -2,8 +2,8 @@ const express = require('express');
 const Joi = require('@hapi/joi');
 
 // const authMiddleware = require('../middlewares/auth');
-const Ticket = require('../models/ticket');
-const Chat = require('../models/chat');
+
+const { findTicketById, addMessageTicket } = require('../repository/ticket');
 
 const router = express.Router();
 
@@ -11,12 +11,7 @@ const router = express.Router();
 
 router.get('/show/:id', async (req, res) => {
     try {
-        const ticket = await Ticket.findById(req.params.id).populate('chat');
-
-        if (!ticket)
-            return res.status(400).send({ error: "Cannot find ticket in our system" });
-
-        res.send(ticket);
+        findTicketById(res, req.params.id, 'chat');
     } catch (err) {
         res.status(400).send({ error: `Cannot find ticket ${err}` })
     }
@@ -33,30 +28,7 @@ router.post('/addMessage/:id', async (req, res) => {
             if (err)
                 return res.status(400).send({ error: `Erro on send a message ${err}` });
 
-            const { name, message } = result;
-
-            const ticket = await Ticket.findById(req.params.id, async (err, doc) => {
-                if (err)
-                    return res.status(400).send({ error: 'Error on find ticket' });
-
-                const chat = new Chat({
-                    name,
-                    message
-                });
-
-                doc.chat.push(chat);
-
-                await Chat.create(chat, (err) => {
-                    if (err)
-                        return res.status(400).send({ error: `Error on create an ticket ${err}` });                        
-                    });
-
-                doc.save((err) => {
-                    if (err)
-                        return res.status(400).send({ error: `Error on save message in ticket ${err}` });
-                });
-            });
-            return res.send({ ticket });
+            addMessageTicket(res, req.params.id, result);
         });
     } catch (err) {
         return res.status(400).send({ error: `Failed send message ${err}` });
