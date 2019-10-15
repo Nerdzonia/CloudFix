@@ -8,8 +8,6 @@ const upload = multer({
     }
 }).array('image');
 
-const Client = require('../models/client');
-
 const { updateTicket, saveTicket } = require('../repository/ticket');
 const { listClientTicketById, listAllClients } = require('../repository/client');
 
