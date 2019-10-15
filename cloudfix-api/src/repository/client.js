@@ -1,16 +1,18 @@
 const Client = require('../models/client');
 
-const { listAll } = require('./default');
+const { listAll, findById } = require('./default');
 
 const listAllClients = async (res, populate = {}) => {
-    listAll(Client, res, populate);
+    try{
+        listAll(Client, res, populate);
+    }catch(err){
+        return err;
+    }
 }
 
 const listClientTicketById = async (res, id, populate = {}) => {
     try{
-        const client = await Client.findById(id).populate(Object.entries(populate).length !== 0 ? populate : '');
-        
-        return res.send(client);
+        findById(Client, id, res, populate);
     }catch (err) {
         return err;
     }

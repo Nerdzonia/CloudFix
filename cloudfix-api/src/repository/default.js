@@ -23,9 +23,14 @@ const listAll = async (model, res, populate = {}) => {
     }
 }
 
-
+const findById = async (model, id,  res, populate) => {
+    const result = await model.findById(id).populate(Object.entries(populate).length !== 0 ? populate : '');
+        
+    return res.send(result);
+}
 
 module.exports = {
     update,
-    listAll
+    listAll,
+    findById
 }
