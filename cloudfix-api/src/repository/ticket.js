@@ -37,7 +37,6 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
             if (err)
                 return res.status(400).send({ error: 'Error on find ticket' });
 
-            console.log(doc)
             if (doc !== null) {
                 const chat = new Chat({
                     name,
