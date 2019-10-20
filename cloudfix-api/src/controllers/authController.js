@@ -1,15 +1,9 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
 const Joi = require('@hapi/joi');
 
-const User = require('../models/user');
-const generateToken = require('../utils/jwt');
-const convertToHtmlAndSendMail = require('../modules/ejs');
-const checkTokenJwt = require('../middlewares/auth');
+const { changePassword, login, resetPassword, registerNewUser } = require('../repository/auth');
 
 const router = express.Router();
-const HASH = process.env.HASH || 'DefaultHash';
 
 router.post('/register', async (req, res) => {
     try {
@@ -23,20 +17,7 @@ router.post('/register', async (req, res) => {
             if (err)
                 return res.status(400).send({ error: `Failed to validade a new user ${err}` });
 
-            const { email } = result
-            if (await User.findOne({ email }))
-                return res.status(400).send({ error: "User already exists!" });
-
-            const user = await User.create(req.body);
-
-            user.password = undefined;
-
-            const token = await generateToken({ id: user.id }, HASH);
-
-            return res.send({
-                user,
-                token,
-            });
+            registerNewUser(res, result);
         });
     } catch (error) {
         return res.status(400).send({ error: 'Registration failed!' });
@@ -53,25 +34,8 @@ router.post('/authenticate', async (req, res) => {
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
                 return res.status(400).send({ error: `Validate error ${err}` });
-                
-            const { email, password } = result;
 
-            const user = await User.findOne({ email }).select('+password');
-
-            if (!user)
-                return res.status(400).send({ error: 'User not found!' });
-
-            if (!await bcrypt.compare(password + HASH, user.password))
-                return res.status(400).send({ error: 'Invalid password!' });
-
-            user.password = undefined;
-
-            const token = await generateToken({ id: user.id }, HASH);
-
-            return res.send({
-                user,
-                token,
-            });
+            login(res, result);
         });
     } catch (err) {
         res.status(400).send({ error: `Failed to authenticate ${err}` });
@@ -80,7 +44,7 @@ router.post('/authenticate', async (req, res) => {
 
 router.post('/change_password', async (req, res) => {
     try {
-        const schema = Joi.object.keys({
+        const schema = Joi.object().keys({
             email: Joi.string().trim().email().required(),
         });
 
@@ -88,36 +52,7 @@ router.post('/change_password', async (req, res) => {
             if (err)
                 return res.status(400).send({ error: `Validate error ${err}` });
 
-            const { email } = result;
-            const user = await User.findOne({ email });
-
-            if (!user)
-                return res.status(400).send({ error: 'User not found!' });
-
-            const token = crypto.randomBytes(20).toString('hex');
-
-            const now = new Date();
-            now.setHours(now.getHours() + 1);
-
-            await User.findByIdAndUpdate(user.id, {
-                '$set': {
-                    passwordResetToken: token,
-                    passwordResetExpires: now,
-                }
-            });
-
-            const data = {
-                link: `${process.env.HOST}${process.env.PORT || ''}/ticket/${token}`
-            }
-
-            const mailer = {
-                to: email,
-                from: 'handhead@gmail.com',
-            }
-
-            convertToHtmlAndSendMail(data, mailer);
-
-            res.send({ message: `Send to email ${email}` });
+            changePassword(res, result);
         });
     } catch (error) {
         console.log(error)
@@ -134,39 +69,20 @@ router.post('/reset_password', async (req, res) => {
     });
 
     Joi.validate(req.body, schema, async (err, result) => {
-        if (err)
-            return res.status(400).send({ error: `Failed to reset password ${err}` });
-
-        const { email, token, password } = result;
         try {
-            const user = await User.findOne({ email })
-                .select('+passwordResetToken passwordResetExpires');
+            if (err)
+                return res.status(400).send({ error: `Failed to reset password ${err}` });
 
-            if (!user)
-                return res.status(400).send({ error: 'User not found' });
-
-            if (token !== user.passwordResetToken)
-                return res.status(400).send({ error: 'Token invalid' });
-
-            const now = new Date();
-
-            if (now > user.passwordResetExpires)
-                return res.status(400).send({ error: 'Token expired, generate a new one' });
-
-            user.password = password;
-
-            await user.save();
-
-            res.send({ message: 'Save password' });
+            resetPassword(res, result);
         } catch (err) {
             res.status(400).send({ error: 'Cannot reset password' })
         }
     });
 });
 
-router.get('/checkJwt', checkTokenJwt ,async (req, res) => {
-    const user = await User.findById(req.userId);
-    res.send(user)
-});
+// router.get('/checkJwt', checkTokenJwt, async (req, res) => {
+//     const user = await User.findById(req.userId);
+//     res.send(user)
+// });
 
 module.exports = app => app.use('/auth', router);
