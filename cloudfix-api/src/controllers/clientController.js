@@ -2,11 +2,13 @@ const express = require('express');
 const Joi = require('@hapi/joi');
 const multer = require('multer');
 const upload = multer({
+    storage: multer.memoryStorage(),
     limits:{
-        files:5,
-        fileSize: 1024 * 1024 * 2
+        fileSize: 1024 * 1024 * 2,
     }
-}).array('image');
+}).array("file", 5);
+
+
 
 const { updateTicket, saveTicket } = require('../repository/ticket');
 const { listClientTicketById, listAllClients } = require('../repository/client');
@@ -20,15 +22,21 @@ router.post('/newTicket', upload, async (req, res) => {
             name: Joi.string().required(),
             title: Joi.string().min(5).required(),
             system: Joi.string().required(),
-            image: Joi.any(),
             message: Joi.string().min(5).required(),
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
                 return res.send({ error: `An error has ocurred ${err}` });
-
-            saveTicket(res, result)
+                result.images = req.files;
+                // To test create image folder in root of api
+                // const {writeFile} = require(`fs`)
+                // const path = require("path")
+                // result.images.map((file) => {
+                //     writeFile(path.resolve(`./image/${file.originalname}`), file.buffer, (err) => err ? console.log(err) : console.log("Ok"))
+                // })
+            saveTicket(res, result);
+            res.send("sucess");
         });
     } catch (error) {
         return res.status(400).send({ error: `Failed to send ticket: ${error}` });
