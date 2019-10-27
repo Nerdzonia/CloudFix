@@ -1,7 +1,7 @@
 const app = require('express')();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
+//const {teste} = require('./cloudinary')
 async function express(){
     try{
         // MIDDLEWARES
@@ -18,6 +18,9 @@ async function express(){
         const { dbConnect } = require('./database');
         await dbConnect();
         
+        //teste
+        //await teste();
+
         // API ROUTES
         require('../routes')(app);
 

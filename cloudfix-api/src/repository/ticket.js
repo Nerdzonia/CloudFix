@@ -1,6 +1,7 @@
 const Ticket = require('../models/ticket');
 const Client = require('../models/client');
 const Chat = require('../models/chat');
+const { uploadImage } = require("../config/cloudinary")
 
 const { update, listAll, findById } = require('./default');
 const convertToHtmlAndSendMail = require('../modules/ejs');
@@ -57,7 +58,7 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
                 });
                 return res.send({ doc });
             } else {
-                res.status(400).send({error: 'Ticket not valid wrong id'});
+                res.status(400).send({ error: 'Ticket not valid wrong id' });
             }
         });
     } catch (err) {
@@ -66,32 +67,52 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
 }
 
 const saveTicket = async (res, result) => {
-    const { email, name, title, message, system } = result;
+    try {
+        const { email, name, title, message, system, image } = result;
+        let img = await uploadImage(image[0])
+        console.log(img)
+        const createTicket = new Ticket({
+            title,
+            message,
+            name,
+            system,
+            // image
+        });
 
-    const createTicket = new Ticket({
-        title,
-        message,
-        name,
-        system
-    });
+        const mailer = {
+            to: email,
+            subject: 'Suporte handhead',
+            from: 'handhead@gmail.com',
+        }
 
-    const mailer = {
-        to: email,
-        subject: 'Suporte handhead',
-        from: 'handhead@gmail.com',
-    }
+        if (await Client.findOne({ email })) {
+            await Client.findOne({ email }, async (err, doc) => {
+                if (err) return res.status(400).send({ error: `error on send ticket ${err}` });
 
-    if (await Client.findOne({ email })) {
-        await Client.findOne({ email }, async (err, doc) => {
-            if (err) return res.status(400).send({ error: `error on send ticket ${err}` });
+                doc.tickets.push(createTicket);
 
-            doc.tickets.push(createTicket);
+                await doc.save((err) => {
+                    if (err) throw err;
+                });
 
-            await doc.save((err) => {
-                if (err) throw err;
+                const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `Erro on send ticket ${err}` }))
+
+                const data = {
+                    link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                }
+
+                await convertToHtmlAndSendMail(data, mailer);
+
+                return res.send({ ticket });
+            });
+        } else {
+            const client = new Client({
+                email,
+                tickets: createTicket._id
             });
 
-            const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `Erro on send ticket ${err}` }))
+            await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
+            const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
 
             const data = {
                 link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
@@ -100,24 +121,11 @@ const saveTicket = async (res, result) => {
             await convertToHtmlAndSendMail(data, mailer);
 
             return res.send({ ticket });
-        });
-    } else {
-        const client = new Client({
-            email,
-            tickets: createTicket._id
-        });
-
-        await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
-        const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
-
-        const data = {
-            link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
         }
-
-        await convertToHtmlAndSendMail(data, mailer);
-
-        return res.send({ ticket });
+    } catch (err) {
+        return res.status(400).send({ error: `erro on save ticket ${err}` })
     }
+
 }
 
 module.exports = {

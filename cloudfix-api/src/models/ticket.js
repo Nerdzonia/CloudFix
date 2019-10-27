@@ -17,6 +17,9 @@ const TicketSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    imagem: {
+        type: Array,
+    },
     chat: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chat',
