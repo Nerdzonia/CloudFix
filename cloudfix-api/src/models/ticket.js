@@ -17,7 +17,7 @@ const TicketSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    imagem: {
+    images: {
         type: Array,
     },
     chat: [{

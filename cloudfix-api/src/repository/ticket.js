@@ -1,7 +1,6 @@
 const Ticket = require('../models/ticket');
 const Client = require('../models/client');
 const Chat = require('../models/chat');
-const { uploadImage } = require("../config/cloudinary")
 
 const { update, listAll, findById } = require('./default');
 const convertToHtmlAndSendMail = require('../modules/ejs');
@@ -67,16 +66,15 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
 }
 
 const saveTicket = async (res, result) => {
+    
     try {
-        const { email, name, title, message, system, image } = result;
-        let img = await uploadImage(image[0])
-        console.log(img)
+        const { email, name, title, message, system, images } = result;
         const createTicket = new Ticket({
             title,
             message,
             name,
             system,
-            // image
+            images
         });
 
         const mailer = {

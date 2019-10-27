@@ -1,14 +1,25 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
 const multer = require('multer');
+const { uploadImage } = require('../config/cloudinary')
+const { existsSync, mkdirSync } = require('fs')
+const path = require("path");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        if (!existsSync('./temp'))
+            mkdirSync('./temp');
+        cb(null, './temp/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now())
+    }
+});
 const upload = multer({
-    storage: multer.memoryStorage(),
-    limits:{
+    storage: storage,
+    limits: {
         fileSize: 1024 * 1024 * 2,
     }
 }).array("file", 5);
-
-
 
 const { updateTicket, saveTicket } = require('../repository/ticket');
 const { listClientTicketById, listAllClients } = require('../repository/client');
@@ -28,15 +39,20 @@ router.post('/newTicket', upload, async (req, res) => {
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
                 return res.send({ error: `An error has ocurred ${err}` });
-                result.images = req.files;
-                // To test create image folder in root of api
-                // const {writeFile} = require(`fs`)
-                // const path = require("path")
-                // result.images.map((file) => {
-                //     writeFile(path.resolve(`./image/${file.originalname}`), file.buffer, (err) => err ? console.log(err) : console.log("Ok"))
-                // })
-            saveTicket(res, result);
-            res.send("sucess");
+            const getData = async () => {
+                return await Promise.all(req.files.map(async (file) => {
+
+                    let data = await uploadImage(file, result.email)
+
+                    return data.url
+                }))
+            }
+            getData().then(data => {
+                result.images = data
+                
+                saveTicket(res, result);    
+            });
+            
         });
     } catch (error) {
         return res.status(400).send({ error: `Failed to send ticket: ${error}` });
@@ -44,7 +60,7 @@ router.post('/newTicket', upload, async (req, res) => {
 });
 
 router.post('/updateTicket', upload, async (req, res) => {
-    try{
+    try {
         const schema = Joi.object().keys({
             id: Joi.strict().required(),
             name: Joi.string().required(),
@@ -55,14 +71,14 @@ router.post('/updateTicket', upload, async (req, res) => {
         });
 
         Joi.validate(req.body, schema, (err, result) => {
-            if(err)
-                return res.status(400).send({error: `Error on search ticket ${err}`});    
-                
+            if (err)
+                return res.status(400).send({ error: `Error on search ticket ${err}` });
+
             updateTicket(result, res);
         });
-    }catch(error){
-        return res.status(400).send({error: `Erro upload ticket ${error}`});
-    }    
+    } catch (error) {
+        return res.status(400).send({ error: `Erro upload ticket ${error}` });
+    }
 });
 
 router.get('/listAll', async (req, res) => {
