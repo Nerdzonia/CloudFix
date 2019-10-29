@@ -101,7 +101,7 @@ const saveTicket = async (res, result) => {
 
                 await convertToHtmlAndSendMail(data, mailer);
 
-                return res.send({ ticket });
+                return res.send({ url: data.link });
             });
         } else {
             const client = new Client({
@@ -118,7 +118,7 @@ const saveTicket = async (res, result) => {
 
             await convertToHtmlAndSendMail(data, mailer);
 
-            return res.send({ ticket });
+            return res.send({ url: data.link });
         }
     } catch (err) {
         return res.status(400).send({ error: `erro on save ticket ${err}` })

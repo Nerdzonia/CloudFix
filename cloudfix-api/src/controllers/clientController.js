@@ -39,20 +39,23 @@ router.post('/newTicket', upload, async (req, res) => {
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
                 return res.send({ error: `An error has ocurred ${err}` });
-            const getData = async () => {
-                return await Promise.all(req.files.map(async (file) => {
+            if (req.files.length !== 0) {
+                const getData = async () => {
+                    return await Promise.all(req.files.map(async (file) => {
 
-                    let data = await uploadImage(file, result.email)
+                        let data = await uploadImage(file, result.email)
 
-                    return data.url
-                }))
+                        return data.url
+                    }))
+                }
+                getData().then(data => {
+                    result.images = data
+
+                    saveTicket(res, result);
+                });
+            } else {
+                saveTicket(res, result);
             }
-            getData().then(data => {
-                result.images = data
-                
-                saveTicket(res, result);    
-            });
-            
         });
     } catch (error) {
         return res.status(400).send({ error: `Failed to send ticket: ${error}` });

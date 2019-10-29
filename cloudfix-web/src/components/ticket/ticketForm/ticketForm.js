@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Router from 'next/router';
 import {
   Grid,
   Header,
@@ -8,6 +9,8 @@ import {
   Button,
   Message
 } from "semantic-ui-react";
+
+import { Alert } from '../../alert/alert';
 
 import ClientRequestor from '../../../services/resources/client';
 
@@ -32,6 +35,8 @@ const TicketForm = props => {
     system: false,
     message: false
   });
+
+  const [alert, setAlert] = useState(null);
 
   const handleFildsChange = (e, { name, value }) => {
     setInput({ ...input, [name]: value });
@@ -78,7 +83,13 @@ const TicketForm = props => {
       let data = await ClientRequestor.sendTicket(input);
 
       //redirect to ticket link
-      console.log(data);
+      if(!data.error){
+        console.log(data)
+        sessionStorage.setItem("ticket", data.url);
+        Router.push('/ticket');
+      }else{
+        setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
+      }
     }
   }
   
@@ -105,6 +116,7 @@ const TicketForm = props => {
 
   return (
     <Grid container centered columns={1}>
+      {alert}
       <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
           <Breadcrumb>

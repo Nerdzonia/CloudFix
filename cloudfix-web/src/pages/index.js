@@ -1,14 +1,5 @@
 import PageLayout from '../components/layout/page'
-import { Input } from '../components/utils/input';
 import TicketForm from "../components/ticket/ticketForm/ticketForm";
-import TicketList from "../components/ticket/ticketList/ticketList";
-
-const style = {
-    content: {
-        textAlign: 'center',
-        padding: 15
-    }
-}
 
 class Index extends React.Component {
     constructor(props){
