@@ -9,7 +9,7 @@ const updateTicket = (body, res) => {
     try {
         update(Ticket, body, res);
     } catch (err) {
-        return err;
+        return res.status(400).send({error: 'Erro ao tentar atualizar o ticket'});
     }
 }
 
@@ -17,7 +17,7 @@ const listAllTicket = (res, populate) => {
     try {
         listAll(Ticket, res, populate);
     } catch (err) {
-        return err;
+        return res.status(400).send({error: 'Erro ao listar tickets '});
     }
 }
 
@@ -25,7 +25,7 @@ const findTicketById = (res, id, populate) => {
     try {
         findById(Ticket, id, res, populate);
     } catch (err) {
-        return err;
+        return res.status(400).send({error: 'Erro ao procurar um ticket'});
     }
 }
 
@@ -101,7 +101,7 @@ const saveTicket = async (res, result) => {
 
                 await convertToHtmlAndSendMail(data, mailer);
 
-                return res.send({ url: data.link });
+                return res.send({ id: ticket.id  });
             });
         } else {
             const client = new Client({
@@ -118,7 +118,7 @@ const saveTicket = async (res, result) => {
 
             await convertToHtmlAndSendMail(data, mailer);
 
-            return res.send({ url: data.link });
+            return res.send({ id: ticket.id });
         }
     } catch (err) {
         return res.status(400).send({ error: `erro on save ticket ${err}` })

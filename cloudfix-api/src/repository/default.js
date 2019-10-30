@@ -7,7 +7,7 @@ const update = (model, body, res) => {
         
         doc.save((err, doc) =>{
             if(err)
-                return res.status(400).send({error: `Error on atualize ticket ${err}`});
+                return res.status(400).send({error: `Ocorreu um erro ao tentar atualizar ${err}`});
 
             return res.send(doc);
         });
@@ -19,14 +19,18 @@ const listAll = async (model, res, populate = {}) => {
         const result = await model.find().populate(Object.entries(populate).length !== 0 ? populate : '');
         return res.send(result);
     } catch (error) {
-        return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
+        return res.status(400).send({ error: `Erro ao tentar listar: ${error}` });
     }
 }
 
 const findById = async (model, id,  res, populate) => {
-    const result = await model.findById(id).populate(Object.entries(populate).length !== 0 ? populate : '');
-        
-    return res.send(result);
+    try{
+        const result = await model.findById(id).populate(Object.entries(populate).length !== 0 ? populate : '');
+            
+        return res.send(result);
+    }catch(err){
+        return res.status(400).send({error: 'Erro ao procurar'});
+    }
 }
 
 module.exports = {
