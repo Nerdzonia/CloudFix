@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import PageLayout from '../components/layout/page';
 
-const Ticket = (props) => {
-    const [ticketLink, setTicketLink] = useState('');
+const Ticket = () => {
+    const { query: { id } } = useRouter();
 
-    useEffect(()=>{
-        if(sessionStorage.getItem("ticket"))
-            setTicketLink(sessionStorage.getItem("ticket"));
-        else
-            Router.push('/');
-    }, [])
     return (
         <PageLayout>
-            <h3><a href={`${ticketLink}`}>Uma copia do link foi enviada para o seu email.</a></h3>
+            <h3><Link href={`myTicket?id=${id}`}><a>Uma copia do link foi enviada para o seu email.</a></Link></h3>
         </PageLayout>
     )
 

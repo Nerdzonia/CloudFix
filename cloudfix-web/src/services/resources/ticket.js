@@ -1,7 +1,16 @@
 import axiosRequestor from '../request';
 
 class Ticket {
-    baseUrl = '/client'
+    baseUrl = '/ticket'
+
+    getTicket = async (id) => {
+        try {
+            let { data } = await axiosRequestor.get(`${this.baseUrl}/show/${id}`);
+            return data;
+        } catch (err) {   
+            return err.response.data;
+        }
+    }
 
     sendTicket = async (object) => {
         try {
@@ -15,21 +24,21 @@ class Ticket {
             }*/
             const form = new FormData();
             Object.keys(object).forEach(element => {
-                if(element === 'image')
+                if (element === 'image')
                     object[element].map(file => form.append('file', file));
                 else
                     form.append(element, object[element]);
             });
-            
+
             let { data } = await axiosRequestor.post(`${this.baseUrl}/newTicket`, form, {
                 headers: {
                     'Content-type': 'multipart/form-data'
                 }
             });
-            
+
             return data;
-        } catch (error) {
-            throw error;
+        } catch (err) {
+            return err;
         }
     }
 

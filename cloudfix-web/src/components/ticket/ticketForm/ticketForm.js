@@ -12,7 +12,7 @@ import {
 
 import { Alert } from '../../alert/alert';
 
-import ClientRequestor from '../../../services/resources/client';
+import TicketRequestor from '../../../services/resources/ticket';
 
 const TicketForm = props => {
   const ImageUpload = React.createRef();
@@ -80,13 +80,10 @@ const TicketForm = props => {
     });
     
     if(validateInputs){
-      let data = await ClientRequestor.sendTicket(input);
+      let data = await TicketRequestor.sendTicket(input);
 
-      //redirect to ticket link
       if(!data.error){
-        console.log(data)
-        sessionStorage.setItem("ticket", data.url);
-        Router.push('/ticket');
+        Router.push(`/ticket?id=${data.id}`, '/ticket');
       }else{
         setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
       }

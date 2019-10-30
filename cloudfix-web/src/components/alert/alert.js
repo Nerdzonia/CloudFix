@@ -4,7 +4,7 @@ import { Button, Header, Icon, Modal } from 'semantic-ui-react';
 export const Alert = ({open, title, message, iconTitle, iconButton, buttonColor, removeAlert}) => {
     const [modalOpen, setModalOpen] = useState(open || false);
 
-    const handleClose = () => {setModalOpen(false); removeAlert(false)};
+    const handleClose = () => {setModalOpen(false); removeAlert(null)};
 
     return (
         <Modal
