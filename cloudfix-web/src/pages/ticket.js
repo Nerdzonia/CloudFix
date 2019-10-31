@@ -1,14 +1,29 @@
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import React, { useEffect } from 'react';
+import Router, { useRouter } from 'next/router';
+import { Segment, Dimmer, Loader } from 'semantic-ui-react';
 
 import PageLayout from '../components/layout/page';
+import TicketCard from '../components/ticket/card';
+
+const Load = () => (
+    <Segment>
+        <Dimmer>
+            <Loader size='large'>Carregando</Loader>
+        </Dimmer>
+    </Segment>
+)
 
 const Ticket = () => {
     const { query: { id } } = useRouter();
+    console.log(id)
+    useEffect(() => {
+        if (!id)
+            Router.push('/')
+    }, [])
 
     return (
         <PageLayout>
-            <h3><Link href={`myTicket?id=${id}`}><a>Uma copia do link foi enviada para o seu email.</a></Link></h3>
+            {id ? <TicketCard id={id} /> : <Load />}
         </PageLayout>
     )
 

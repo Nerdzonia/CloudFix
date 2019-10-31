@@ -7,7 +7,7 @@ import {
   Form,
   Breadcrumb,
   Button,
-  Message
+  Message,
 } from "semantic-ui-react";
 
 import { Alert } from '../../alert/alert';
@@ -16,7 +16,8 @@ import TicketRequestor from '../../../services/resources/ticket';
 
 const TicketForm = props => {
   const ImageUpload = React.createRef();
-
+  
+  const [load, setLoad] = useState(false);
   const [input, setInput] = useState({
     email: '',
     name: '',
@@ -80,13 +81,16 @@ const TicketForm = props => {
     });
     
     if(validateInputs){
+      setLoad(true);
       let data = await TicketRequestor.sendTicket(input);
-
+      
       if(!data.error){
         Router.push(`/ticket?id=${data.id}`, '/ticket');
       }else{
         setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
       }
+      
+      setLoad(false);
     }
   }
   
@@ -239,6 +243,8 @@ const TicketForm = props => {
                         icon="check"
                         labelPosition="right"
                         onClick={sendTicket}
+                        disabled={load}
+                        loading={load}
                       ></Button>
                     </Button.Group>
                   </Grid.Column>

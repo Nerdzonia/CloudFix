@@ -10,7 +10,6 @@ const Page = props => (
       </Grid.Row>
       <Grid.Row centered>
         <Grid.Column>
-
           {props.children}
         </Grid.Column>
       </Grid.Row>

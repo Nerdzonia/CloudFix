@@ -1,7 +1,7 @@
 const express = require('express');
-const Joi = require('@hapi/joi');
 const multer = require('multer');
-const { existsSync, mkdirSync } = require('fs')
+const { existsSync, mkdirSync } = require('fs');
+const Joi = require('@hapi/joi');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -21,6 +21,7 @@ const upload = multer({
     }
 }).array("file", 5);
 
+const lang = require('../utils/joiPtBr');
 const { updateTicket, saveTicket } = require('../repository/ticket');
 const { findTicketById, addMessageTicket } = require('../repository/ticket');
 const { uploadImage } = require('../config/cloudinary');
@@ -29,7 +30,7 @@ const router = express.Router();
 
 router.post('/newTicket', upload, async (req, res) => {
     try {
-        const schema = Joi.object().keys({
+        const schema = Joi.object().options({ language: { ...lang } }).keys({
             email: Joi.string().trim().email().required(),
             name: Joi.string().required(),
             title: Joi.string().min(5).required(),
@@ -38,9 +39,25 @@ router.post('/newTicket', upload, async (req, res) => {
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
-            if (err)
-                return res.send({ error: `An error has ocurred ${err}` });
-                
+            if (err) {
+                let erroName = err.details[0].context.key;
+                let name;
+                switch (erroName) {
+                    case 'name':
+                        name = "nome"
+                        break;
+                    case 'title':
+                        name = "Assunto"
+                    case 'system':
+                        name = "Sistema"
+                    case 'message':
+                        name = "Descrição"
+                    default:
+                        break;
+                }
+
+                return res.send({ error: `Verifique se o campo ${name} esta preenchido corretamente` });
+            }
             if (req.files.length !== 0) {
                 const getData = async () => {
                     return await Promise.all(req.files.map(async (file) => {
@@ -92,7 +109,7 @@ router.get('/show/:id', async (req, res) => {
             id: Joi.string().required()
         });
         Joi.validate(req.params, schema, (err, result) => {
-            if(err)
+            if (err)
                 return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
 
             findTicketById(res, result.id, 'chat');
