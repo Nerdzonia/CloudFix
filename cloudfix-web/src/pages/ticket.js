@@ -15,7 +15,7 @@ const Load = () => (
 
 const Ticket = () => {
     const { query: { id } } = useRouter();
-    console.log(id)
+
     useEffect(() => {
         if (!id)
             Router.push('/')

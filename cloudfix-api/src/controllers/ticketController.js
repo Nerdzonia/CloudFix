@@ -48,14 +48,20 @@ router.post('/newTicket', upload, async (req, res) => {
                         break;
                     case 'title':
                         name = "Assunto"
+                        break;
                     case 'system':
                         name = "Sistema"
+                        break;
+                    case 'email':
+                        name = "email"
+                        break;
                     case 'message':
                         name = "Descrição"
+                        break;
                     default:
                         break;
                 }
-
+                
                 return res.send({ error: `Verifique se o campo ${name} esta preenchido corretamente` });
             }
             if (req.files.length !== 0) {

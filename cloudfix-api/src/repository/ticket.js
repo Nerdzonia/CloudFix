@@ -83,20 +83,21 @@ const saveTicket = async (res, result) => {
             from: 'handhead@gmail.com',
         }
 
+        
         if (await Client.findOne({ email })) {
             await Client.findOne({ email }, async (err, doc) => {
                 if (err) return res.status(400).send({ error: `error on send ticket ${err}` });
-
+                
                 doc.tickets.push(createTicket);
-
+                
                 await doc.save((err) => {
                     if (err) throw err;
                 });
-
+                
                 const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `Erro on send ticket ${err}` }))
-
+                
                 const data = {
-                    link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                    link: `${process.env.WEB_LINK}?id=${ticket.id}`,
                 }
 
                 await convertToHtmlAndSendMail(data, mailer);
@@ -111,11 +112,11 @@ const saveTicket = async (res, result) => {
 
             await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
             const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
-
+            
             const data = {
-                link: `${process.env.HOST}${process.env.PORT || ''}/ticket/show/${ticket.id}`,
+                link: `${process.env.WEB_LINK}?id=${ticket.id}`,
             }
-
+            
             await convertToHtmlAndSendMail(data, mailer);
 
             return res.send({ id: ticket.id });

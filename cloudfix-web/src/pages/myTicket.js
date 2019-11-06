@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Router, { useRouter } from 'next/router'
+import { Loader } from 'semantic-ui-react';
 
 import PageLayout from '../components/layout/page'
 import { Alert } from '../components/alert/alert';
 import TicketRequestor from '../services/resources/ticket';
-
+import TicketView from '../components/myTicket/viewForm';
 
 const MyTicket = (props) => {
     const { query: { id } } = useRouter();
@@ -28,9 +29,10 @@ const MyTicket = (props) => {
 
     return (
         <PageLayout>
-            {/* {console.log(ticket)} */}
+            {ticket ? <TicketView ticket={ticket} /> : <Loader active inline='centered' />}
             {alert}
         </PageLayout>
+
     );
 }
 
