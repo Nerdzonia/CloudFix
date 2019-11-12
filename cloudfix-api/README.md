@@ -15,6 +15,8 @@ MAILER_HOST
 MAILER_PORT
 MAILER_USER
 MAILER_PASS
+
+CLOUDINARY_URL
 ```
 
 ## [mongo free database](https://www.mongodb.com/cloud/atlas)
