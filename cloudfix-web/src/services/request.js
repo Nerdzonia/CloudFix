@@ -29,7 +29,7 @@ axiosRequest.interceptors.response.use(
         if (!error.response) {
             error.response = {
                 status: 444,
-                data: { message: "Ero ao mandar para o servidor." }
+                data: { error: `Erro ao mandar para o servidor. ${navigator.onLine ? null : 'Verifique sua internet'}` }
             }
         };
         return Promise.reject(error);
