@@ -18,6 +18,11 @@ const UserSchema = new mongoose.Schema({
         required: true,
         select: false,
     },
+    adminType: {
+        type: String,
+        required: true,
+        default: 'normal'
+    },
     passwordResetToken: {
         type: String,
         select: false,

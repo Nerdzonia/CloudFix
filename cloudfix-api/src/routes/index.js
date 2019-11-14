@@ -8,4 +8,7 @@ module.exports = app => {
 
     //path projects
     require('../controllers/ticketController')(app);
+
+    //path system
+    require('../controllers/systemController')(app);
 };

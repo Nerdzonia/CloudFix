@@ -104,7 +104,7 @@ const registerNewUser = async (res, result) => {
     try {
         const { email } = result
         if (await User.findOne({ email }))
-            return res.status(400).send({ error: "User already exists!" });
+            return res.status(400).send({ error: "Usuário já existe!" });
 
         const user = await User.create(result);
 
@@ -117,7 +117,7 @@ const registerNewUser = async (res, result) => {
             token,
         });
     } catch (err) {
-        return res.status(400).send({ error: `Registration failed! ${err}` });
+        return res.status(400).send({ error: `Falha ao registrar novo usuário! ${err}` });
     }
 }
 
