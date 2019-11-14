@@ -64,7 +64,7 @@ router.post('/newTicket', upload, async (req, res) => {
                 
                 return res.send({ error: `Verifique se o campo ${name} esta preenchido corretamente` });
             }
-            if (req.files.length !== 0) {
+            if (req.files !== undefined) {
                 const getData = async () => {
                     return await Promise.all(req.files.map(async (file) => {
 
