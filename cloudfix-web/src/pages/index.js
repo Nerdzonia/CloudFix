@@ -6,7 +6,7 @@ const Index = () => {
 
     return (
         <PageLayout>
-            <TicketList />
+            <TicketForm />
         </PageLayout>
     );
 }

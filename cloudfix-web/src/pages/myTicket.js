@@ -16,7 +16,7 @@ const MyTicket = (props) => {
     useEffect(() => {
         if (id) {
             (async () => {
-                let data = await TicketRequestor.getTicket(id);
+                let { data } = await TicketRequestor.getTicket(id);
                 if (!data.error)
                     setTicket(data);
                 else
