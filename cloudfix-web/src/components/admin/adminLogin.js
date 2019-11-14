@@ -93,13 +93,6 @@ class AdminLogin extends React.Component {
                           </Header>
                         </Link>
                       </Grid.Row>
-                      <Grid.Row>
-                        <Link href="/">
-                          <Header as="h5" color="blue" textAlign="left">
-                            Criar uma conta
-                          </Header>
-                        </Link>
-                      </Grid.Row>
                     </Grid.Column>
                     <Grid.Row>
                       <Grid.Column floated="right" width={5}>

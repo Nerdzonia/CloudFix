@@ -11,7 +11,7 @@ import {
   Dropdown,
   Segment,
   Button,
-  Input
+  Input, Message
 } from "semantic-ui-react";
 
 const filterOptions = [
@@ -27,6 +27,45 @@ const filterOptions = [
   }
 ];
 
+const filterCheckedOptions = [
+  {
+    key: "aberto",
+    text: "Aberto",
+    value: "aberto"
+  },
+  {
+    key: "respondido",
+    text: "Respondido",
+    value: "respondido"
+  },
+  {
+    key: "atrasado",
+    text: "Atrasado",
+    value: "atrasado"
+  },
+  {
+    key: "fechado",
+    text: "Fechado",
+    value: "fechado"
+  }
+];
+
+
+  
+const CheckedTicketsOptions = () => (
+  <Form>
+    <Form.Field inline>
+      <Label pointing="right">Marcar como:</Label>
+      <Dropdown
+        placeholder="Escolha..."
+        scrolling
+        selection
+        options={filterCheckedOptions}
+      />
+    </Form.Field>
+  </Form>
+)
+
 const TicketTable = props => {
   return (
     <Grid>
@@ -40,20 +79,13 @@ const TicketTable = props => {
               <Menu.Item name="Fechados" />
               <Menu.Menu position="right">
                 <Menu.Item>
-                  <Form>
-                    <Form.Field inline>
-                      <Label pointing="right">Filtrar tickets por:</Label>
-                      <Dropdown
-                        placeholder="Escolha..."
-                        scrolling
-                        selection
-                        options={filterOptions}
-                      />
-                    </Form.Field>
-                  </Form>
+                <Input icon='search' placeholder='Search...' />
                 </Menu.Item>
               </Menu.Menu>
             </Menu>
+            </Segment>
+            <Segment>
+            
             <Divider hidden />
             <Grid.Row>
               <Table selectable striped unstackable celled compact definition>
@@ -85,21 +117,21 @@ const TicketTable = props => {
                   </Table.Row>
                 </Table.Body>
 
-                <Table.Footer>
+                <Table.Footer fullWidth>
                   <Table.Row>
-                    <Table.HeaderCell colSpan="16">
-                      <Grid.Column>
-                        <Button.Group floated="left">
-                          <Button
-                            compact
-                            disabled
-                            content="Fechar Ticket"
-                            icon="x"
-                            color="red"
-                          />
-                        </Button.Group>
-                      </Grid.Column>
-                      <Grid.Column>
+                    <Table.HeaderCell />
+                    <Table.HeaderCell colSpan='4'>
+
+                      <Grid.Row>
+                        <Message attached='bottom'>Mostrando 1 - 2 resultados de 2.</Message>
+                      </Grid.Row>
+
+                      <Divider hidden />
+
+                      <Grid.Row>
+                        
+                        {/* QUANDO ALGUM TICKET FOR SELECIONADO CheckedTicketsOptions DEVE SER MOSTRADO*/}
+                      
                         <Menu floated="right" pagination>
                           <Menu.Item as="a" icon>
                             <Icon name="chevron left" />
@@ -110,10 +142,13 @@ const TicketTable = props => {
                             <Icon name="chevron right" />
                           </Menu.Item>
                         </Menu>
-                      </Grid.Column>
+
+                      </Grid.Row>   
+
                     </Table.HeaderCell>
                   </Table.Row>
-                </Table.Footer>
+                </Table.Footer> 
+                
               </Table>
             </Grid.Row>
           </Segment>
