@@ -10,6 +10,7 @@ async function dbConnect(){
                 useNewUrlParser: true,
                 useCreateIndex: true,
                 useFindAndModify: false,
+                useUnifiedTopology: true
             }, 
             (err) => console.log(`Database status ==> ${err === null ? 'Connected in database' : err}`)
         );
