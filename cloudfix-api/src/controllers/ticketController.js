@@ -22,8 +22,7 @@ const upload = multer({
 }).array("file", 5);
 
 const lang = require('../utils/joiPtBr');
-const { updateTicket, saveTicket } = require('../repository/ticket');
-const { findTicketById, addMessageTicket } = require('../repository/ticket');
+const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket } = require('../repository/ticket');
 const { uploadImage } = require('../config/cloudinary');
 
 const router = express.Router();
