@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Router from 'next/router';
 import {
   Grid,
@@ -8,11 +8,13 @@ import {
   Breadcrumb,
   Button,
   Message,
+  Dropdown
 } from "semantic-ui-react";
 
 import { Alert } from '../../alert/alert';
 
 import TicketRequestor from '../../../services/resources/ticket';
+import SystemRequestor from '../../../services/resources/system';
 
 const TicketForm = props => {
   const ImageUpload = React.createRef();
@@ -101,6 +103,16 @@ const TicketForm = props => {
     </Message>
   )
 
+  const [system, setSystem] = useState({load: false, system: null});
+  
+  const formatInDropdawnArray = (system) => {
+    return system.map(e => ({key: e.name, value: e.name, text: e.name}));
+  }
+  
+  useEffect(() => {
+    SystemRequestor.listAllSystems().then(data => setSystem({load: true, system: data}));
+  }, []);
+
   const style = {
     imageContent: {
       width: 245,
@@ -137,7 +149,7 @@ const TicketForm = props => {
           </Header>
           <Divider />
         </Grid.Row>
-
+        
         <Grid.Row>
           <Grid.Column>
             <Form>
@@ -196,14 +208,13 @@ const TicketForm = props => {
                     </Form.Field>
                     <Form.Field required>
                       <label size="small">Sistema: </label>
-                      <Form.Input
-                        icon="computer"
-                        iconPosition="left"
+                      <Form.Select
+                        loading={!system.load}
                         fluid
                         label={{ icon: "asterisk" }}
-                        labelPosition="right corner"
-                        placeholder="Ex: handhead..."
-                        error={checkInput.system ? {content: 'Por favor, insira um sistema para relatar o erro!'} : null}
+                        placeholder="Ex: Selecione o sistema"
+                        error={checkInput.system ? {content: 'Por favor, selecione o sistema que ocorreu o erro!'} : null}
+                        options={system.load ? formatInDropdawnArray(system.system.data) : []}
                         name='system'
                         value={input.system}
                         onChange={handleFildsChange}
