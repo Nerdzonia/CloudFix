@@ -27,7 +27,7 @@ const filterOptions = [
   }
 ];
 
-const filterCheckedOptions = [
+const advancedSearch = [
   {
     key: "aberto",
     text: "Aberto",
@@ -60,7 +60,7 @@ const CheckedTicketsOptions = () => (
         placeholder="Escolha..."
         scrolling
         selection
-        options={filterCheckedOptions}
+        options={advancedSearch}
       />
     </Form.Field>
   </Form>
@@ -73,16 +73,32 @@ const TicketTable = props => {
         <Segment.Group>
           <Segment>
             <Menu secondary>
-              <Menu.Item active name="Abertos" />
-              <Menu.Item name="Respondidos" />
-              <Menu.Item name="Atrasados" />
-              <Menu.Item name="Fechados" />
-              <Menu.Menu position="right">
+              <Menu.Menu position="left">
                 <Menu.Item>
-                <Input icon='search' placeholder='Search...' />
+                <Input icon='search' placeholder='Buscar campo...' />
+                </Menu.Item>
+                <Menu.Item>
+                  <Button compact icon labelPosition='right'>
+                    Busca Avançada
+                    <Icon name='search' />
+                  </Button>
                 </Menu.Item>
               </Menu.Menu>
             </Menu>
+
+
+            <Form>
+    <Form.Field inline>
+      <Label pointing="right">Marcar como:</Label>
+      <Dropdown
+        placeholder="Escolha..."
+        scrolling
+        selection
+        options={advancedSearch}
+      />
+    </Form.Field>
+  </Form>
+
             </Segment>
             <Segment>
             
@@ -95,6 +111,7 @@ const TicketTable = props => {
                     <Table.HeaderCell>Status</Table.HeaderCell>
                     <Table.HeaderCell>Título</Table.HeaderCell>
                     <Table.HeaderCell>Data de Abertura</Table.HeaderCell>
+                    <Table.HeaderCell>Opções</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
 
@@ -106,14 +123,14 @@ const TicketTable = props => {
                     <Table.Cell>Em aberto</Table.Cell>
                     <Table.Cell>Sistema não cadastra clientes</Table.Cell>
                     <Table.Cell>31/08/2019</Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell collapsing>
-                      <Checkbox></Checkbox>
+                    <Table.Cell>
+
+                    <Button.Group>
+                      <Button basic icon='check circle' color='green'/>
+                      <Button basic icon='external square alternate' color='blue'/>
+                      <Button icon='stop circle' color='red'/>
+                    </Button.Group>
                     </Table.Cell>
-                    <Table.Cell>Em aberto</Table.Cell>
-                    <Table.Cell>Sistema não cadastra clientes</Table.Cell>
-                    <Table.Cell>31/08/2019</Table.Cell>
                   </Table.Row>
                 </Table.Body>
 
