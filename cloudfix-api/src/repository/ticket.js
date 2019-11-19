@@ -5,11 +5,30 @@ const Chat = require('../models/chat');
 const { update, listAll, findById } = require('./default');
 const convertToHtmlAndSendMail = require('../modules/ejs');
 
-const updateTicket = (body, res) => {
+const mailerTemplate = {
+    to: null,
+    subject: 'Suporte handhead',
+    from: 'handhead@gmail.com',
+}
+
+const updateTicket = async (body, res) => {
     try {
-        update(Ticket, body, res);
+        await Client.findOne({ tickets: body.id }, async (err, doc) => {
+            if (err || !doc)
+                return res.status(400).send({ error: 'Erro ao tentar achar o ticket' });
+
+                let templateLink = './src/resources/mail/email_update_template.ejs';
+
+                const sendEmailLink = convertToHtmlAndSendMail(
+                    { link: `${process.env.WEB_LINK}?id=${doc.id}` },
+                    { ...mailerTemplate, to: doc.email,  },
+                    templateLink
+                );
+        
+                update(Ticket, body, res, sendEmailLink);
+        });
     } catch (err) {
-        return res.status(400).send({error: 'Erro ao tentar atualizar o ticket'});
+        return res.status(400).send({ error: 'Erro ao tentar atualizar o ticket' });
     }
 }
 
@@ -17,7 +36,7 @@ const listAllTicket = (res, populate) => {
     try {
         listAll(Ticket, res, populate);
     } catch (err) {
-        return res.status(400).send({error: 'Erro ao listar tickets '});
+        return res.status(400).send({ error: 'Erro ao listar tickets ' });
     }
 }
 
@@ -25,7 +44,7 @@ const findTicketById = (res, id, populate) => {
     try {
         findById(Ticket, id, res, populate);
     } catch (err) {
-        return res.status(400).send({error: 'Erro ao procurar um ticket'});
+        return res.status(400).send({ error: 'Erro ao procurar um ticket' });
     }
 }
 
@@ -42,7 +61,6 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
                     name,
                     message
                 });
-
 
                 doc.chat.push(chat);
 
@@ -66,7 +84,7 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
 }
 
 const saveTicket = async (res, result) => {
-    
+
     try {
         const { email, name, title, message, system, images } = result;
         const createTicket = new Ticket({
@@ -77,32 +95,29 @@ const saveTicket = async (res, result) => {
             images
         });
 
-        const mailer = {
-            to: email,
-            subject: 'Suporte handhead',
-            from: 'handhead@gmail.com',
-        }
+        const mailer = {...mailerTemplate, to: email};
 
-        
+        let templatePath = './src/resources/mail/email_template.ejs';
+
         if (await Client.findOne({ email })) {
             await Client.findOne({ email }, async (err, doc) => {
                 if (err) return res.status(400).send({ error: `error on send ticket ${err}` });
-                
+
                 doc.tickets.push(createTicket);
-                
+
                 await doc.save((err) => {
                     if (err) throw err;
                 });
-                
+
                 const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `Erro on send ticket ${err}` }))
-                
+
                 const data = {
                     link: `${process.env.WEB_LINK}?id=${ticket.id}`,
                 }
 
-                await convertToHtmlAndSendMail(data, mailer);
+                await convertToHtmlAndSendMail(data, mailer, templatePath);
 
-                return res.send({ id: ticket.id  });
+                return res.send({ id: ticket.id });
             });
         } else {
             const client = new Client({
@@ -112,12 +127,12 @@ const saveTicket = async (res, result) => {
 
             await Client.create(client).catch(err => res.status(400).send({ error: `${err} Don't create a new Client` }));
             const ticket = await Ticket.create(createTicket).catch(err => res.status(400).send({ error: `${err} Don't create a new Ticket` }));
-            
+
             const data = {
                 link: `${process.env.WEB_LINK}?id=${ticket.id}`,
             }
-            
-            await convertToHtmlAndSendMail(data, mailer);
+
+            await convertToHtmlAndSendMail(data, mailer, templatePath);
 
             return res.send({ id: ticket.id });
         }

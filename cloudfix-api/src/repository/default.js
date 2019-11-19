@@ -1,4 +1,4 @@
-const update = (model, body, res) => {
+const update = (model, body, res, callback = Function.prototype) => {
     model.findById(body.id, async (err, doc) => {
         if(err)
             return res.status(400).send({error: `Erro ao atualizar ${err}`});
@@ -9,7 +9,11 @@ const update = (model, body, res) => {
             if(err)
                 return res.status(400).send({error: `Ocorreu um erro ao tentar atualizar ${err}`});
 
-            return res.send({doc});
+
+                if(callback)
+                    callback(doc);
+
+            return res.send({data: {...doc._doc}});
         });
     });
 }

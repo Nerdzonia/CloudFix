@@ -3,8 +3,8 @@ const ejs = require('ejs');
 // const fs = require('fs');
 const transporter = require('./mailer');
 
-function convertToHtmlAndSendMail(data, mailer) {
-    ejs.renderFile(path.resolve('./src/resources/mail/email_template.ejs'), data, (err, html) => {
+function convertToHtmlAndSendMail(data, mailer, template) {
+    ejs.renderFile(path.resolve(template), data, (err, html) => {
         if (err)
             return console.log(err);
         // fs.writeFile(path.resolve('./src/resources/mail/template.html'), html, (err) => {console.log('ok')}); // this create a local file template
