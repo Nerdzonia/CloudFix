@@ -12,6 +12,16 @@ class Ticket {
         }
     }
 
+    //listar todos os tickets
+    listTickets = async () => {
+        try {
+            let { data } = await axiosRequestor.get(`${this.baseUrl}/listAll`);
+            return data;
+        } catch (err) {   
+            return err.response.data;
+        }
+    }
+
     sendTicket = async (object) => {
         try {
             /*{
