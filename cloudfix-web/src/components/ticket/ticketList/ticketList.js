@@ -19,7 +19,7 @@ const TicketList = props => {
 
         <Grid.Row>
           <Header as="h1" textAlign="center">
-            Tickets
+            Listagem de Tickets
           </Header>
           <Divider/>
         </Grid.Row>
