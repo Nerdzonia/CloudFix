@@ -13,7 +13,7 @@ class Ticket {
     }
 
     //listar todos os tickets
-    listTickets = async () => {
+    getAllTickets = async () => {
         try {
             let { data } = await axiosRequestor.get(`${this.baseUrl}/listAll`);
             return data;
