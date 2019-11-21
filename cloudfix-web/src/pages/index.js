@@ -9,7 +9,8 @@ class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ticketList: []};
+            ticketList: []
+        };
     }
 
     componentDidMount(){
@@ -19,8 +20,7 @@ class Index extends React.Component {
     render() {
         return (
             <PageLayout>
-                {console.log(this.state.ticketList)}
-                <TicketList />
+                <TicketList ticketList={this.state.ticketList} />
             </PageLayout>
         );
     }
