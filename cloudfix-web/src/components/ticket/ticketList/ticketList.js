@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Label,
   Icon,
@@ -12,25 +12,39 @@ import {
   Button,
   Input,
   Breadcrumb,
-  Header,
+  Header
 } from "semantic-ui-react";
 import * as moment from 'moment';
 import Link from "next/link";
 
 moment.locale('pt-BR')
 
-const filterOptions = [
-  {
-    key: "data_abertura",
-    text: "Data de Abertura",
-    value: "data_abertura"
-  },
-  {
-    key: "titulo",
-    text: "Título",
-    value: "titulo"
-  }
-];
+// const filterOptions = [
+//   {
+//     key: "data_abertura",
+//     text: "Data de Abertura",
+//     value: "data_abertura"
+//   },
+//   {
+//     key: "titulo",
+//     text: "Título",
+//     value: "titulo"
+//   }
+// ];
+
+// const CheckedTicketsOptions = () => (
+//   <Form>
+//     <Form.Field inline>
+//       <Label pointing="right">Marcar como:</Label>
+//       <Dropdown
+//         placeholder="Escolha..."
+//         scrolling
+//         selection
+//         options={advancedSearch}
+//       />
+//     </Form.Field>
+//   </Form>
+// )
 
 const advancedSearch = [
   {
@@ -55,23 +69,11 @@ const advancedSearch = [
   }
 ];
 
-// const CheckedTicketsOptions = () => (
-//   <Form>
-//     <Form.Field inline>
-//       <Label pointing="right">Marcar como:</Label>
-//       <Dropdown
-//         placeholder="Escolha..."
-//         scrolling
-//         selection
-//         options={advancedSearch}
-//       />
-//     </Form.Field>
-//   </Form>
-// )
 
-const Row = (status, title, updatedAt, index) => (
+const Row = (status, system, title, updatedAt, index) => (
   <Table.Row key={`${title}-${index}`}>
     <Table.Cell>{status}</Table.Cell>
+    <Table.Cell>{system}</Table.Cell>
     <Table.Cell>{title}</Table.Cell>
     <Table.Cell>{moment(updatedAt).fromNow()}</Table.Cell>
     <Table.Cell>
@@ -87,9 +89,10 @@ const Row = (status, title, updatedAt, index) => (
 
 const TicketList = (props) => {
 
+  const [isActive, setActive] = useState(false)
+
   const {
-    ticketList,
-    load
+    ticketList
   } = props;
 
   return (
@@ -112,7 +115,7 @@ const TicketList = (props) => {
         </Grid.Row>
 
         <Grid.Row>
-
+    
           <Grid>
             <Grid.Column mobile={16} tablet={16} computer={16}>
               <Segment.Group>
@@ -123,7 +126,7 @@ const TicketList = (props) => {
                         <Input icon='search' placeholder='Buscar campo...' />
                       </Menu.Item>
                       <Menu.Item>
-                        <Button compact icon labelPosition='right'>
+                        <Button compact icon labelPosition='right' onClick={() => setActive(!isActive)}>
                           Busca Avançada
                           <Icon name='search' />
                         </Button>
@@ -144,6 +147,16 @@ const TicketList = (props) => {
                     </Menu.Menu>
                   </Menu>
                 </Segment>
+
+                {isActive 
+                ? <Segment>
+                  <Menu secondary>
+                    <Menu.Item>
+                      <Header>Bakanayaro Konoyaro</Header>
+                    </Menu.Item>
+                  </Menu>
+                </Segment> : null}
+
                 <Segment>
                   <Divider hidden />
                   <Grid.Row>
@@ -152,6 +165,7 @@ const TicketList = (props) => {
                       <Table.Header>
                         <Table.Row>
                           <Table.HeaderCell>Status</Table.HeaderCell>
+                          <Table.HeaderCell>Sistema</Table.HeaderCell>
                           <Table.HeaderCell>Título</Table.HeaderCell>
                           <Table.HeaderCell>Ultima vez modificado</Table.HeaderCell>
                           <Table.HeaderCell>Opções</Table.HeaderCell>
@@ -159,7 +173,7 @@ const TicketList = (props) => {
                       </Table.Header>
 
                       <Table.Body>
-                        {ticketList.map((e, i) => Row(e.status, e.title, e.updatedAt, i))}
+                        {ticketList.map((e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
                       </Table.Body>
 
                       <Table.Footer fullWidth>
