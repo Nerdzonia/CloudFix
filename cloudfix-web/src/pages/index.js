@@ -1,8 +1,10 @@
 import React from 'react';
+import { Header } from 'semantic-ui-react';
+
 import PageLayout from '../components/layout/page';
 import apiRequestor from "../services/resources/ticket";
 import TicketList from "../components/ticket/ticketList/ticketList";
-import TicketForm from "../components/ticket/ticketForm/ticketForm";
+// import TicketForm from "../components/ticket/ticketForm/ticketForm";
 
 class Index extends React.Component {
 
@@ -20,7 +22,7 @@ class Index extends React.Component {
     render() {
         return (
             <PageLayout>
-                <TicketList ticketList={this.state.ticketList} />
+                {!!this.state.ticketList.data ? <TicketList ticketList={this.state.ticketList.data} load={!!this.state.ticketList.data} /> : <Header textAlign="center">Carregando</Header>}
             </PageLayout>
         );
     }

@@ -18,6 +18,7 @@
     "file-loader": "^4.2.0",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.7.0",
+    "moment": "^2.24.0",
     "next": "^9.0.1",
     "next-compose-plugins": "^2.2.0",
     "next-images": "^1.1.2",
