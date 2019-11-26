@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const convertToHtmlAndSendMail = require('../modules/ejs');
-// const checkTokenJwt = require('../middlewares/auth');
 const generateToken = require('../utils/jwt');
 
 const HASH = process.env.HASH || 'DefaultHash';
@@ -15,7 +14,7 @@ const changePassword = async (res, result) => {
         const user = await User.findOne({ email });
 
         if (!user)
-            return res.status(400).send({ error: 'User not found!' });
+            return res.status(400).send({ error: 'Usuário não encontrado.' });
 
         const token = crypto.randomBytes(20).toString('hex');
 
@@ -38,7 +37,7 @@ const changePassword = async (res, result) => {
             from: 'handhead@gmail.com',
         }
 
-        convertToHtmlAndSendMail(data, mailer);
+        convertToHtmlAndSendMail(data, mailer, './src/resources/mail/email_template.ejs');
 
         res.send({ message: `Send to email ${email}` });
     } catch (err) {
@@ -54,10 +53,10 @@ const resetPassword = async (res, result) => {
             .select('+passwordResetToken passwordResetExpires');
 
         if (!user)
-            return res.status(400).send({ error: 'User not found' });
+            return res.status(400).send({ error: 'Usuário não encontrado' });
 
         if (token !== user.passwordResetToken)
-            return res.status(400).send({ error: 'Token invalid' });
+            return res.status(400).send({ error: 'Token invalido' });
 
         const now = new Date();
 
@@ -68,7 +67,7 @@ const resetPassword = async (res, result) => {
 
         await user.save();
 
-        res.send({ message: 'Save password' });
+        res.send({ data: {message: 'Password salvo' }});
     } catch (err) {
         return err;
     }
@@ -92,8 +91,10 @@ const login = async (res, result) => {
         const token = await generateToken({ id: user.id }, HASH);
 
         return res.send({
-            user,
-            token,
+            data: {
+                user,
+                token,
+            }
         });
     } catch (err) {
         return err;
@@ -113,8 +114,10 @@ const registerNewUser = async (res, result) => {
         const token = await generateToken({ id: user.id }, HASH);
 
         return res.send({
-            user,
-            token,
+            data: {
+                user,
+                token,
+            }
         });
     } catch (err) {
         return res.status(400).send({ error: `Falha ao registrar novo usuário! ${err}` });
