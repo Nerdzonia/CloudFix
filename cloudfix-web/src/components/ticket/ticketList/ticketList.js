@@ -1,3 +1,4 @@
+import lodash from 'lodash';
 import React, { useState } from "react";
 import {
   Label,
@@ -95,6 +96,31 @@ const TicketList = (props) => {
     ticketList
   } = props;
 
+  state = {
+    column: null,
+    data: ticketList,
+    direction: null,
+  }
+
+  handleSort = (clickedColumn) => () => {
+    const { column, data, direction } = this.state
+
+    if (column !== clickedColumn) {
+      this.setState({
+        column: clickedColumn,
+        data: lodash.sortBy(data, [clickedColumn]),
+        direction: 'ascending',
+      })
+
+      return
+    }
+
+    this.setState({
+      data: data.reverse(),
+      direction: direction === 'ascending' ? 'descending' : 'ascending',
+    })
+  }
+
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={12}>
@@ -161,10 +187,12 @@ const TicketList = (props) => {
                   <Divider hidden />
                   <Grid.Row>
 
-                    <Table selectable striped unstackable celled compact >
+                    <Table sortable selectable striped unstackable celled compact >
                       <Table.Header>
                         <Table.Row>
-                          <Table.HeaderCell>Status</Table.HeaderCell>
+                          <Table.HeaderCell sorted={column === 'name' ? direction : null}
+                            onClick={this.handleSort('name')}
+                          >Status</Table.HeaderCell>
                           <Table.HeaderCell>Sistema</Table.HeaderCell>
                           <Table.HeaderCell>Título</Table.HeaderCell>
                           <Table.HeaderCell>Ultima vez modificado</Table.HeaderCell>
@@ -173,7 +201,7 @@ const TicketList = (props) => {
                       </Table.Header>
 
                       <Table.Body>
-                        {ticketList.map((e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
+                        {lodash.map((e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
                       </Table.Body>
 
                       <Table.Footer fullWidth>
