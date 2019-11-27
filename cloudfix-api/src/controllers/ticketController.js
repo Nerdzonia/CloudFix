@@ -121,10 +121,12 @@ router.get('/updateStatus/:status', async (req, res) => {
 
             if(Object.keys(ENUM).some(e => ENUM[e] === status)){
                 //salvar se o status corresponde a algum dos valores do objeto
+            }else{
+                res.status(400).send({ error: `Status invalido` });
             }
         })
     } catch (err) {
-        res.status(400).send({ error: `Cannot find ticket ${err}` })
+        res.status(400).send({ error: `Não pode achar o ticket ${err}` })
     }
 });
 
