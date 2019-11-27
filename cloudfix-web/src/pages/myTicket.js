@@ -16,11 +16,14 @@ const MyTicket = (props) => {
     useEffect(() => {
         if (id) {
             (async () => {
-                let { data } = await TicketRequestor.getTicket(id);
+                let data = await TicketRequestor.getTicket(id);
+    
                 if (!data.error)
-                    setTicket(data);
-                else
-                    setAlert(<Alert buttonColor='red' iconButton='checkmark' iconTitle='warning' message={data.error} open={true} title='Erro'  removeAlert={setAlert} />)
+                    setTicket(data.data);
+                else{
+                    setAlert(<Alert buttonColor='red' iconButton='checkmark' iconTitle='warning' message={`${data.error}. Redirecionando para home em 5 segundos.`} open={true} title='Erro'  removeAlert={setAlert} />)
+                    setTimeout(() => Router.push('/'), 5000);
+                }
             })();
         } else {
             Router.push('/');

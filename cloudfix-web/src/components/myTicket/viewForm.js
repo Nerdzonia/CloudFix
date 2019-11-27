@@ -15,7 +15,6 @@ const MyTicket = (props) => {
         images,
         chat
     } = props.ticket;
-    console.log(chat)
     return (
         <Container style={{ paddingBottom: "5em" }} textAlign='center'>
             <Header as='h1' block>
@@ -29,9 +28,11 @@ const MyTicket = (props) => {
                         Assunto:
                     </Header>
                     <MessageContainer message={title} />
-                    <Header as='h3'>
+                    { images.length !== 0
+                    ? <Header as='h3'>
                         Imagens do erro
                     </Header>
+                    : null}
                     {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer message={`Imagem ${i+1}`} />  </a>) : null}
                     <Header as='h3'>
                         Mensagem:
