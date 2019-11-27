@@ -1,6 +1,10 @@
 import lodash from 'lodash';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Router from 'next/router';
+import SystemRequestor from '../../../services/resources/system';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+import { DateRangePicker } from 'react-date-range';
 import {
   Label,
   Icon,
@@ -21,56 +25,28 @@ import Link from "next/link";
 
 moment.locale('pt-BR')
 
-// const filterOptions = [
-//   {
-//     key: "data_abertura",
-//     text: "Data de Abertura",
-//     value: "data_abertura"
-//   },
-//   {
-//     key: "titulo",
-//     text: "Título",
-//     value: "titulo"
-//   }
-// ];
-
-// const CheckedTicketsOptions = () => (
-//   <Form>
-//     <Form.Field inline>
-//       <Label pointing="right">Marcar como:</Label>
-//       <Dropdown
-//         placeholder="Escolha..."
-//         scrolling
-//         selection
-//         options={advancedSearch}
-//       />
-//     </Form.Field>
-//   </Form>
-// )
-
-const advancedSearch = [
+const statusSearch = [
   {
     key: "aberto",
     text: "Aberto",
-    value: "aberto"
+    value: "open"
   },
   {
     key: "respondido",
     text: "Respondido",
-    value: "respondido"
+    value: "answered"
   },
   {
     key: "atrasado",
     text: "Atrasado",
-    value: "atrasado"
+    value: "late"
   },
   {
     key: "fechado",
     text: "Fechado",
-    value: "fechado"
+    value: "closed"
   }
 ];
-
 
 const Row = (id, status, system, title, updatedAt, index) => (
   <Table.Row key={`${title}-${index}`}>
@@ -126,9 +102,26 @@ const TicketList = (props) => {
     });
   }
   const { column, direction, data } = sort;
+
+  const [system, setSystem] = useState({load: false, system: null});
+
+  const formatInDropdawnArray = (system) => {
+    return system.map(e => ({key: e.name, value: e.name, text: e.name}));
+  }
+
+  useEffect(() => {
+    SystemRequestor.listAllSystems().then(data => setSystem({load: true, system: data}));
+  }, []);
+
+  const selectionRange = {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection',
+  }
+
   return (
     <Grid container centered columns={1}>
-      <Grid.Column mobile={16} tablet={10} computer={12}>
+      <Grid.Column mobile={16} tablet={10} computer={16}>
         <Grid.Row>
           <Breadcrumb>
             <Link href="/">
@@ -164,28 +157,35 @@ const TicketList = (props) => {
                       </Menu.Item>
                       <Menu.Item>
                         <Form>
-                          <Form.Field inline>
-                            <Dropdown
-                              placeholder="Escolha..."
-                              scrolling
-                              selection
-                              options={advancedSearch}
-                            />
-                            <Label pointing="left">Marcar como:</Label>
-                          </Form.Field>
+                          <Form.Select options={statusSearch} inline label='Marcar como:' placeholder='Aberto' />
                         </Form>
                       </Menu.Item>
                     </Menu.Menu>
                   </Menu>
                 </Segment>
 
+                {/* BUSCA AVANÇADA */}
                 {isActive
                   ? <Segment>
-                    <Menu secondary>
-                      <Menu.Item>
-                        <Header>Bakanayaro Konoyaro</Header>
-                      </Menu.Item>
-                    </Menu>
+                    <Form>
+                        <Form.Group widths='equal'>
+                          <Form.Select options={statusSearch} fluid label='Status:' placeholder='Aberto' />
+                          
+                          {/*trazer select com nome de clientes */}
+                          <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
+                          <Form.Select
+                            loading={!system.load}
+                            fluid
+                            label={'Sistema:'}
+                            placeholder="Ex: Selecione o sistema"
+                            options={system.load ? formatInDropdawnArray(system.system.data) : []}
+                            name='system'
+                          />
+                      </Form.Group>
+                      <Form.Group widths="equal">
+                      <DateRangePicker/>
+                      </Form.Group>
+                    </Form>
                   </Segment> : null}
 
                 <Segment>
