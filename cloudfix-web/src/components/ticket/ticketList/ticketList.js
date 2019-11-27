@@ -90,37 +90,39 @@ const Row = (status, system, title, updatedAt, index) => (
 
 const TicketList = (props) => {
 
-  const [isActive, setActive] = useState(false)
-
   const {
     ticketList
   } = props;
 
-  state = {
+  const [isActive, setActive] = useState(false);
+  
+  const [sort, setSort] = useState({
     column: null,
     data: ticketList,
     direction: null,
-  }
+  });
 
-  handleSort = (clickedColumn) => () => {
-    const { column, data, direction } = this.state
-
+  const handleSort = (clickedColumn) => () => {
+    const { column, data, direction } = sort;
+    
     if (column !== clickedColumn) {
-      this.setState({
+      setSort({
         column: clickedColumn,
         data: lodash.sortBy(data, [clickedColumn]),
         direction: 'ascending',
-      })
+      });
 
       return
     }
 
-    this.setState({
+    setSort({
+      ...sort,
       data: data.reverse(),
       direction: direction === 'ascending' ? 'descending' : 'ascending',
-    })
+    });
   }
-
+  console.log(ticketList)
+  const { column, direction, data } = sort;
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={12}>
@@ -187,21 +189,21 @@ const TicketList = (props) => {
                   <Divider hidden />
                   <Grid.Row>
 
-                    <Table sortable selectable striped unstackable celled compact >
-                      <Table.Header>
+                    <Table sortable selectable striped unstackable celled compact textAlign="center" >
+                      <Table.Header >
                         <Table.Row>
-                          <Table.HeaderCell sorted={column === 'name' ? direction : null}
-                            onClick={this.handleSort('name')}
-                          >Status</Table.HeaderCell>
-                          <Table.HeaderCell>Sistema</Table.HeaderCell>
-                          <Table.HeaderCell>Título</Table.HeaderCell>
-                          <Table.HeaderCell>Ultima vez modificado</Table.HeaderCell>
-                          <Table.HeaderCell>Opções</Table.HeaderCell>
+                          <Table.HeaderCell>STATUS</Table.HeaderCell>
+                          <Table.HeaderCell>SISTEMA</Table.HeaderCell>
+                          <Table.HeaderCell sorted={column === 'title' ? direction : null}
+                            onClick={handleSort('title')}>TÍTULO</Table.HeaderCell>
+                          <Table.HeaderCell sorted={column === 'updatedAt' ? direction : null}
+                            onClick={handleSort('updatedAt')}>ULTIMA VEZ MODIFICADO</Table.HeaderCell>
+                          <Table.HeaderCell>OPÇÕES</Table.HeaderCell>
                         </Table.Row>
                       </Table.Header>
 
                       <Table.Body>
-                        {lodash.map((e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
+                        {lodash.map(data, (e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
                       </Table.Body>
 
                       <Table.Footer fullWidth>
