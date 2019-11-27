@@ -1,5 +1,6 @@
 import lodash from 'lodash';
 import React, { useState } from "react";
+import Router from 'next/router';
 import {
   Label,
   Icon,
@@ -71,17 +72,20 @@ const advancedSearch = [
 ];
 
 
-const Row = (status, system, title, updatedAt, index) => (
+const Row = (id, status, system, title, updatedAt, index) => (
   <Table.Row key={`${title}-${index}`}>
     <Table.Cell>{status}</Table.Cell>
     <Table.Cell>{system}</Table.Cell>
     <Table.Cell>{title}</Table.Cell>
     <Table.Cell>{moment(updatedAt).fromNow()}</Table.Cell>
     <Table.Cell>
-
+    
       <Button.Group>
         <Button basic icon='check circle' color='green' />
-        <Button basic icon='external square alternate' color='blue' />
+        <Button basic icon='external square alternate' color='blue' onClick={() => Router.push({
+          pathname: '/myTicket',
+          query: { id: id },
+        })} />
         <Button icon='stop circle' color='red' />
       </Button.Group>
     </Table.Cell>
@@ -95,7 +99,7 @@ const TicketList = (props) => {
   } = props;
 
   const [isActive, setActive] = useState(false);
-  
+
   const [sort, setSort] = useState({
     column: null,
     data: ticketList,
@@ -104,7 +108,7 @@ const TicketList = (props) => {
 
   const handleSort = (clickedColumn) => () => {
     const { column, data, direction } = sort;
-    
+
     if (column !== clickedColumn) {
       setSort({
         column: clickedColumn,
@@ -121,7 +125,6 @@ const TicketList = (props) => {
       direction: direction === 'ascending' ? 'descending' : 'ascending',
     });
   }
-  console.log(ticketList)
   const { column, direction, data } = sort;
   return (
     <Grid container centered columns={1}>
@@ -143,7 +146,7 @@ const TicketList = (props) => {
         </Grid.Row>
 
         <Grid.Row>
-    
+
           <Grid>
             <Grid.Column mobile={16} tablet={16} computer={16}>
               <Segment.Group>
@@ -176,14 +179,14 @@ const TicketList = (props) => {
                   </Menu>
                 </Segment>
 
-                {isActive 
-                ? <Segment>
-                  <Menu secondary>
-                    <Menu.Item>
-                      <Header>Bakanayaro Konoyaro</Header>
-                    </Menu.Item>
-                  </Menu>
-                </Segment> : null}
+                {isActive
+                  ? <Segment>
+                    <Menu secondary>
+                      <Menu.Item>
+                        <Header>Bakanayaro Konoyaro</Header>
+                      </Menu.Item>
+                    </Menu>
+                  </Segment> : null}
 
                 <Segment>
                   <Divider hidden />
@@ -203,7 +206,7 @@ const TicketList = (props) => {
                       </Table.Header>
 
                       <Table.Body>
-                        {lodash.map(data, (e, i) => Row(e.status, e.system, e.title, e.updatedAt, i))}
+                        {lodash.map(data, (e, i) => Row(e._id, e.status, e.system, e.title, e.updatedAt, i))}
                       </Table.Body>
 
                       <Table.Footer fullWidth>
@@ -239,7 +242,7 @@ const TicketList = (props) => {
                       </Table.Footer>
 
                     </Table>
-                    
+
                   </Grid.Row>
                 </Segment>
               </Segment.Group>
