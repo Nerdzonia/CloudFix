@@ -108,6 +108,26 @@ router.post('/updateTicket', upload, async (req, res) => {
     }
 });
 
+router.get('/updateStatus/:status', async (req, res) => {
+    try {
+        const schema = Joi.object().keys({
+            status: Joi.string().required()
+        });
+        Joi.validate(req.params, schema, (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
+
+            const ENUM = {OPEN: 'open', SOLVED: 'solved', CLOSED: 'closed'};
+
+            if(Object.keys(ENUM).some(e => ENUM[e] === status)){
+                //salvar se o status corresponde a algum dos valores do objeto
+            }
+        })
+    } catch (err) {
+        res.status(400).send({ error: `Cannot find ticket ${err}` })
+    }
+});
+
 router.get('/show/:id', async (req, res) => {
     try {
         const schema = Joi.object().keys({
