@@ -1,29 +1,28 @@
-import lodash from 'lodash';
 import React, { useState, useEffect } from "react";
 import Router from 'next/router';
-import SystemRequestor from '../../../services/resources/system';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
-import { DateRangePicker } from 'react-date-range';
+import Link from "next/link";
+import lodash from 'lodash';
 import {
-  Label,
   Icon,
   Table,
   Menu,
   Divider,
   Grid,
   Form,
-  Dropdown,
   Segment,
   Button,
   Input,
   Breadcrumb,
   Header
 } from "semantic-ui-react";
+import { DateRange } from 'react-date-range';
+import * as rdrLocales from "react-date-range/dist/locale";
 import * as moment from 'moment';
-import Link from "next/link";
 
 moment.locale('pt-BR')
+import SystemRequestor from '../../../services/resources/system';
+import 'react-date-range/dist/theme/default.css';
+import 'react-date-range/dist/styles.css';
 
 const statusSearch = [
   {
@@ -113,12 +112,19 @@ const TicketList = (props) => {
     SystemRequestor.listAllSystems().then(data => setSystem({load: true, system: data}));
   }, []);
 
-  const selectionRange = {
+  const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
     key: 'selection',
-  }
+  });
 
+  const handleSelect = (date) =>{
+    setSelectionRange({
+      ...selectionRange,
+      ...date.selection
+    })
+  }
+  
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={16}>
@@ -183,7 +189,13 @@ const TicketList = (props) => {
                           />
                       </Form.Group>
                       <Form.Group widths="equal">
-                      <DateRangePicker/>
+                        <DateRange
+                          locale={rdrLocales.pt}
+                          
+                          ranges={[selectionRange]}
+                          onChange={handleSelect}
+                        
+                        />
                       </Form.Group>
                     </Form>
                   </Segment> : null}

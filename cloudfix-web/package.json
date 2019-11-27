@@ -25,6 +25,7 @@
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
     "react-cookies": "^0.1.1",
+    "react-date-range": "^1.0.0-beta",
     "react-dom": "^16.8.6",
     "sass-loader": "^7.1.0",
     "semantic-ui-css": "^2.4.1",
