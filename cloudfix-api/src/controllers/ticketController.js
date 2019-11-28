@@ -22,7 +22,7 @@ const upload = multer({
 }).array("file", 5);
 
 const lang = require('../utils/joiPtBr');
-const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket } = require('../repository/ticket');
+const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket, advancedSearch } = require('../repository/ticket');
 const { uploadImage } = require('../config/cloudinary');
 
 const router = express.Router();
@@ -60,7 +60,7 @@ router.post('/newTicket', upload, async (req, res) => {
                     default:
                         break;
                 }
-                
+
                 return res.send({ error: `Verifique se o campo ${name} esta preenchido corretamente` });
             }
             if (req.files !== undefined) {
@@ -108,20 +108,50 @@ router.post('/updateTicket', upload, async (req, res) => {
     }
 });
 
+router.post('/advancedSearch', async (req, res) => {
+    try {
+        const schema = Joi.object().keys({
+            name: Joi.string(),
+            status: Joi.string(),
+            startAt: Joi.date(),
+            endsAt: Joi.date()
+        });
+
+        Joi.validate(req.body, schema, (err, result) => {
+            if (err)
+                return res.status(400).send({ error: 'Verifique se os campos estão corretos.' });
+
+            const ENUM = { OPEN: 'open', SOLVED: 'solved', CLOSED: 'closed' };
+
+            if (!!result.status) {
+                if (Object.keys(ENUM).some(e => ENUM[e] === result.status))
+                    advancedSearch(res, result);
+                else    
+                    res.status(400).send({ error: `Status invalido` });
+            } else {
+                advancedSearch(res, result);
+            }
+        });
+    } catch (error) {
+        return res.status(400).send({ error: `Erro fazer a busca ${error}` });
+    }
+});
+
 router.get('/updateStatus/:status', async (req, res) => {
     try {
         const schema = Joi.object().keys({
             status: Joi.string().required()
         });
+
         Joi.validate(req.params, schema, (err, result) => {
             if (err)
                 return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
 
-            const ENUM = {OPEN: 'open', SOLVED: 'solved', CLOSED: 'closed'};
+            const ENUM = { OPEN: 'open', SOLVED: 'solved', CLOSED: 'closed' };
 
-            if(Object.keys(ENUM).some(e => ENUM[e] === status)){
+            if (Object.keys(ENUM).some(e => ENUM[e] === result.status)) {
                 //salvar se o status corresponde a algum dos valores do objeto
-            }else{
+            } else {
                 res.status(400).send({ error: `Status invalido` });
             }
         })

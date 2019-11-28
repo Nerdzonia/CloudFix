@@ -142,10 +142,43 @@ const saveTicket = async (res, result) => {
 
 }
 
+const advancedSearch = async (res, result) => {
+    try{
+        let query = {};
+
+        Object.keys(result).map(e => {
+            switch (e) {
+                case 'startAt':
+                    query['updatedAt'] = { ...query['updatedAt'], $gte: `${result[e]}` };
+                    break;
+                case 'endsAt':
+                    query['updatedAt'] = { ...query['updatedAt'], $lte:`${result[e]}` };
+                    break;
+                case 'name':
+                    query[e] = new RegExp(`.*${result[e]}.*`, 'i');
+                    break;
+                default:
+                    query[e] = result[e];
+                    break;
+                }
+            });
+            console.log(query)
+        const data = await Ticket.find(query) || [];
+            
+        if(data.length !== 0)
+            res.send({data: data});
+        else
+            res.status(400).send({error: 'Sem resultado na busca avançada do ticket.'});
+    }catch(err){
+        return res.status(400).send({error: 'Ocorreu algum erro ao fazer busca avançada no ticket.'});
+    }
+}
+
 module.exports = {
     updateTicket,
     listAllTicket,
     findTicketById,
     addMessageTicket,
     saveTicket,
+    advancedSearch
 }
