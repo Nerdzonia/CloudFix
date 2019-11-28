@@ -162,7 +162,7 @@ const advancedSearch = async (res, result) => {
                     break;
                 }
             });
-            console.log(query)
+            
         const data = await Ticket.find(query) || [];
             
         if(data.length !== 0)
