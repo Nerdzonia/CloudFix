@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Router from 'next/router';
 import {
   Grid,
@@ -8,17 +8,15 @@ import {
   Breadcrumb,
   Button,
   Message,
-  Dropdown
 } from "semantic-ui-react";
 
 import { Alert } from '../../alert/alert';
-
 import TicketRequestor from '../../../services/resources/ticket';
-import SystemRequestor from '../../../services/resources/system';
+import SystemSelect from '../../utils/SystemSelect';
 
 const TicketForm = props => {
   const ImageUpload = React.createRef();
-  
+
   const [load, setLoad] = useState(false);
   const [input, setInput] = useState({
     email: '',
@@ -48,15 +46,15 @@ const TicketForm = props => {
   const handleImage = (e) => {
     if (e.target.files[0]) {
       let file = e.target.files[0];
-      
-      if(file.size >= 2097152)
+
+      if (file.size >= 2097152)
         return alert('Porfavor insira um arquivo menor que 2MB');
-      
-      if(input.image.length >= 5)
+
+      if (input.image.length >= 5)
         return alert('Maximo de arquivos alcançados');
 
       setInput({ ...input, image: input.image ? [file, ...input.image] : [file] });
-        
+
       let reader = new FileReader();
       reader.onload = function (e) {
         setImage(e.target.result);
@@ -69,37 +67,38 @@ const TicketForm = props => {
     let check = {};
 
     Object.keys(input).forEach(element => {
-      if(element !== 'image')
-        if(input[element] == '')
+      if (element !== 'image')
+        if (input[element] == '')
           check[element] = true;
         else
           check[element] = false;
     });
 
     setCheckInput(check);
-    
+
     let validateInputs = Object.keys(check).every(element => {
       return check[element] === false;
     });
-    
-    if(validateInputs){
+
+    if (validateInputs) {
       setLoad(true);
-      let data = await TicketRequestor.sendTicket(input);
-      
-      if(!data.error){
-        Router.push(`/ticket?id=${data.id}`, '/ticket');
-      }else{
-        setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
-      }
-      
+      console.log(input)
+      // let data = await TicketRequestor.sendTicket(input);
+
+      // if (!data.error) {
+      //   Router.push(`/ticket?id=${data.id}`, '/ticket');
+      // } else {
+      //   setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
+      // }
+
       setLoad(false);
     }
   }
-  
+
   const ArchiveBox = () => (
     <Message>
       <Message.Header>Itens adicionados (Maximo de arquivos 5, tamanho ate 2MB)</Message.Header>
-      <Message.List items={input.image.map((image, i) => <div key={i}><strong>{i+1} == </strong> {image.name}</div>)} />
+      <Message.List items={input.image.map((image, i) => <div key={i}><strong>{i + 1} == </strong> {image.name}</div>)} />
     </Message>
   )
 
@@ -139,7 +138,7 @@ const TicketForm = props => {
           </Header>
           <Divider />
         </Grid.Row>
-        
+
         <Grid.Row>
           <Grid.Column>
             <Form>
@@ -156,7 +155,7 @@ const TicketForm = props => {
                           iconPosition="left"
                           fluid
                           placeholder="Ex: Exemplo dos exemplos..."
-                          error={checkInput.name ? {content: 'Por favor, insira seu nome!'} : null}
+                          error={checkInput.name ? { content: 'Por favor, insira seu nome!' } : null}
                           name='name'
                           value={input.name}
                           onChange={handleFildsChange}
@@ -169,7 +168,7 @@ const TicketForm = props => {
                           iconPosition="left"
                           fluid
                           placeholder="Ex: exemplo@exemplo.com..."
-                          error={checkInput.email ? {content: 'Por favor, insira seu email!'} : null}
+                          error={checkInput.email ? { content: 'Por favor, insira seu email!' } : null}
                           name='email'
                           value={input.email}
                           onChange={handleFildsChange}
@@ -190,7 +189,7 @@ const TicketForm = props => {
                         label={{ icon: "asterisk" }}
                         labelPosition="right corner"
                         placeholder="Ex: Titulo..."
-                        error={checkInput.title ? {content: 'Por favor, insira um assunto!'} : null}
+                        error={checkInput.title ? { content: 'Por favor, insira um assunto!' } : null}
                         name='title'
                         value={input.title}
                         onChange={handleFildsChange}
@@ -199,8 +198,12 @@ const TicketForm = props => {
                     <Form.Field required>
                       <label size="small">Sistema: </label>
                       <SystemSelect
+                        fluid
+                        placeholder="Ex: Selecione o sistema"
+                        name='system'
                         label={{ icon: "asterisk" }}
-                        error={checkInput.system ? {content: 'Por favor, selecione o sistema que ocorreu o erro!'} : null}
+                        error={checkInput.system}
+                        errorMessage={'Por favor, selecione o sistema que ocorreu o erro!'}
                         value={input.system}
                         onChange={handleFildsChange}
                       />
@@ -209,11 +212,11 @@ const TicketForm = props => {
                       <Form.Field required width={11} >
                         <label size="small">Descrição: </label>
                         <Form.TextArea
-                          style={{ minHeight: 200 }} 
+                          style={{ minHeight: 200 }}
                           icon="comment alternate outline"
                           iconposition="left"
                           placeholder="Para que o atendimento seja eficiente, detalhe o máximo possível..."
-                          error={checkInput.message ? {content: 'Relate o erro acima!'} : null}
+                          error={checkInput.message ? { content: 'Relate o erro acima!' } : null}
                           name='message'
                           value={input.message}
                           onChange={handleFildsChange}
@@ -229,7 +232,7 @@ const TicketForm = props => {
                     </Form.Group>
                   </Grid.Column>
                   <Grid.Column>
-                  {image ? <ArchiveBox /> : null}
+                    {image ? <ArchiveBox /> : null}
                     <Button.Group floated="right">
                       <Button>Cancelar</Button>
                       <Button.Or text="ou" />
