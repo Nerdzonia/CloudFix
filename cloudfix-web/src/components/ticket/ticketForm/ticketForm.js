@@ -103,16 +103,6 @@ const TicketForm = props => {
     </Message>
   )
 
-  const [system, setSystem] = useState({load: false, system: null});
-  
-  const formatInDropdawnArray = (system) => {
-    return system.map(e => ({key: e.name, value: e.name, text: e.name}));
-  }
-  
-  useEffect(() => {
-    SystemRequestor.listAllSystems().then(data => setSystem({load: true, system: data}));
-  }, []);
-
   const style = {
     imageContent: {
       width: 245,
@@ -208,14 +198,9 @@ const TicketForm = props => {
                     </Form.Field>
                     <Form.Field required>
                       <label size="small">Sistema: </label>
-                      <Form.Select
-                        loading={!system.load}
-                        fluid
+                      <SystemSelect
                         label={{ icon: "asterisk" }}
-                        placeholder="Ex: Selecione o sistema"
                         error={checkInput.system ? {content: 'Por favor, selecione o sistema que ocorreu o erro!'} : null}
-                        options={system.load ? formatInDropdawnArray(system.system.data) : []}
-                        name='system'
                         value={input.system}
                         onChange={handleFildsChange}
                       />

@@ -21,6 +21,8 @@ import * as moment from 'moment';
 
 moment.locale('pt-BR')
 import SystemRequestor from '../../../services/resources/system';
+import SystemSelect from '../../utils/system_select';
+import { Icon, Table, Menu, Divider, Grid, Form, Segment, Button, Input, Breadcrumb, Header } from "semantic-ui-react";
 import 'react-date-range/dist/theme/default.css';
 import 'react-date-range/dist/styles.css';
 
@@ -102,16 +104,6 @@ const TicketList = (props) => {
   }
   const { column, direction, data } = sort;
 
-  const [system, setSystem] = useState({load: false, system: null});
-
-  const formatInDropdawnArray = (system) => {
-    return system.map(e => ({key: e.name, value: e.name, text: e.name}));
-  }
-
-  useEffect(() => {
-    SystemRequestor.listAllSystems().then(data => setSystem({load: true, system: data}));
-  }, []);
-
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
@@ -179,14 +171,10 @@ const TicketList = (props) => {
                           
                           {/*trazer select com nome de clientes */}
                           <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
-                          <Form.Select
-                            loading={!system.load}
-                            fluid
-                            label={'Sistema:'}
-                            placeholder="Ex: Selecione o sistema"
-                            options={system.load ? formatInDropdawnArray(system.system.data) : []}
-                            name='system'
-                          />
+                          
+                          {/*systemselect*/}
+                          <SystemSelect/>
+
                       </Form.Group>
                       <Form.Group widths="equal">
                         <DateRange
