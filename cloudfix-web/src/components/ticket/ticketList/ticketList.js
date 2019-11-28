@@ -20,9 +20,7 @@ import * as rdrLocales from "react-date-range/dist/locale";
 import * as moment from 'moment';
 
 moment.locale('pt-BR')
-import SystemRequestor from '../../../services/resources/system';
-import SystemSelect from '../../utils/system_select';
-import { Icon, Table, Menu, Divider, Grid, Form, Segment, Button, Input, Breadcrumb, Header } from "semantic-ui-react";
+import SystemSelect from '../../utils/SystemSelect';
 import 'react-date-range/dist/theme/default.css';
 import 'react-date-range/dist/styles.css';
 
@@ -173,7 +171,10 @@ const TicketList = (props) => {
                           <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
                           
                           {/*systemselect*/}
-                          <SystemSelect/>
+                          <SystemSelect
+                            placeholder="selecione o sistema"
+                            label="Sistema:"
+                          />
 
                       </Form.Group>
                       <Form.Group widths="equal">
