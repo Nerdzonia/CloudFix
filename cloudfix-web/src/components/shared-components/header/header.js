@@ -26,8 +26,8 @@ const HeaderC = props => {
             <Dropdown item text='Admin' >
               <Dropdown.Menu>
                 {loadToken('token')
-                  ? <><Dropdown.Item><Link href="/ticketList"><a>Lista de chamados</a></Link></Dropdown.Item>
-                    <Dropdown.Item><Link href="/admin"><a onClick={() => removeToken('token')}>sair</a></Link></Dropdown.Item></>
+                  ? <><Link href="/ticketList"><Dropdown.Item><a>Lista de chamados</a></Dropdown.Item></Link>
+                    <Link href="/admin"><Dropdown.Item onClick={() => removeToken('token')}><a>Sair</a></Dropdown.Item></Link></>
                   : <Dropdown.Item><Link href="/admin" ><a>Login</a></Link></Dropdown.Item>}
               </Dropdown.Menu>
             </Dropdown>

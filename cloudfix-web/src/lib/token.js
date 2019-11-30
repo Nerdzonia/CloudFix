@@ -1,10 +1,10 @@
 import Cookie from 'js-cookie';
 import jwtDecode from 'jwt-decode';
 
-export const renewToken = (name, ctx, minutes) => {
+export const renewToken = (name, ctx = {}, minutes) => {
     let value = null;
     if(ctx.res){
-        value = ctx.res.req.headers.cookie;
+        value = ctx.req.headers.cookie;
     } else {
         value = loadToken(name);
     }
@@ -34,10 +34,12 @@ export const removeToken = (name) => {
 
 // receive context from getInitialProps(only server side)
 export const checkToken = (ctx = {}, token) => {
-    
-    if(ctx.res && !!ctx.res.req.headers.cookie)
-        return () => (ctx.res.req.headers.cookie.split('=').some(e => e === 'token'));
-    else
+    // ctx.req.headers.cookie
+    if(ctx.req && ctx.req.headers.cookie){
+        return ctx.req.headers.cookie.split('=').some(e => e === 'token');
+    }
+    else{
         return !!loadToken(token);
+    }
 
 }

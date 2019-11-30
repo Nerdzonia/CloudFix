@@ -143,16 +143,16 @@ class AdminLogin extends React.Component {
                   <Grid.Row>
                     <Grid.Column floated="right" width={5}>
                       <Button.Group floated="right">
-                        <Button onClick={() => this.setState({ login: "", password: "" })}>Limpar</Button>
-                        <Button.Or text="ou" />
                         <Button
                           positive
                           content="Entrar como Admin"
                           icon="check"
-                          labelPosition="right"
+                          labelPosition="left"
                           onClick={this.checkForm}
                           loading={this.state.load}
                         ></Button>
+                        <Button.Or text="ou" />
+                        <Button onClick={() => this.setState({ login: "", password: "" })}>Limpar</Button>
                       </Button.Group>
                     </Grid.Column>
                   </Grid.Row>

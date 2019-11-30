@@ -2,7 +2,7 @@ import React from 'react';
 import Router from 'next/router';
 import { Loader, Dimmer } from 'semantic-ui-react';
 
-import { checkToken, renewToken, removeToken } from '../lib/token';
+import { checkToken, renewToken, removeToken, loadToken } from '../lib/token';
 import { redirect } from '../lib/auth';
 import PageLayout from '../components/layout/page';
 import apiRequestor from "../services/resources/ticket";
@@ -22,6 +22,15 @@ class Index extends React.Component {
         else
             redirect(ctx, '/admin');
     }
+    
+    // shouldComponentUpdate(nextProps, nextState){
+    //     if (loadToken('token'))
+    //         renewToken('token', {}, 30);
+    //     else
+    //         Router.push('/admin');
+
+    //     return nextProps;
+    // }
 
     componentDidMount() {
         apiRequestor.getAllTickets().then(

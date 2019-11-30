@@ -84,7 +84,7 @@ const login = async (res, result) => {
             return res.status(400).send({ error: 'Usuário não encontrado!' });
 
         if (!await bcrypt.compare(password + HASH, user.password))
-            return res.status(400).send({ error: 'Senha invalida!' });
+            return res.status(400).send({ error: 'Email ou senha invalida!' });
 
         user.password = undefined;
 
