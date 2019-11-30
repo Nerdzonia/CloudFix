@@ -1,6 +1,11 @@
 const withPlugins = require('next-compose-plugins');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const Dotenv = require('dotenv-webpack');
+// const nextEnv = require('next-env');
+// const dotenvLoad = require('dotenv-load');
+
+// dotenvLoad();
+// const withNextEnv = nextEnv();
 
 //Configure webpack plugins
 const nextConfigurations = {
