@@ -1,5 +1,5 @@
 import axios from 'axios';
-import cookie from 'react-cookies';
+import { loadToken } from  '../lib/token';
 
 const baseURL = process.env.URL || 'localhost:3000';
 
@@ -13,7 +13,7 @@ const axiosRequest = axios.create({
 
 axiosRequest.interceptors.request.use(
     config => {
-        const token = cookie.load('jwt');
+        const token = loadToken('token');
         config.headers = {
             ...config.headers,
             Authorization: `Bearer ${token}`

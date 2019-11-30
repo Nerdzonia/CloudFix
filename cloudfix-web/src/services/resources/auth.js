@@ -1,11 +1,19 @@
 import axiosRequestor from '../request';
+import { setToken } from '../../lib/token';
 
-const router = '/auth';
-
-export function login(login){
-    try{
-        axiosRequestor.post(`${router}/login`, {login});
-    }catch(error){
-        throw error;
+class auth {
+    baseUrl = '/auth';
+    
+     async login(login){
+        try{
+           let { data } = await axiosRequestor.post(`${this.baseUrl}/authenticate`, login);
+           setToken('token', data.token || '', 30);
+           return data;
+        }catch(error){
+            // console.log(error)
+            return error.response.data;
+        }
     }
 }
+
+export default new auth();

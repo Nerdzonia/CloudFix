@@ -82,14 +82,14 @@ const TicketForm = props => {
 
     if (validateInputs) {
       setLoad(true);
-      console.log(input)
-      // let data = await TicketRequestor.sendTicket(input);
+      
+      let data = await TicketRequestor.sendTicket(input);
 
-      // if (!data.error) {
-      //   Router.push(`/ticket?id=${data.id}`, '/ticket');
-      // } else {
-      //   setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
-      // }
+      if (!data.error) {
+        Router.push(`/ticket?id=${data.id}`, '/ticket');
+      } else {
+        setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
+      }
 
       setLoad(false);
     }
