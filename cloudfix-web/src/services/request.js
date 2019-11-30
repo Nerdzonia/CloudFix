@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { loadToken } from  '../lib/token';
 
-const baseURL = process.env.URL || 'localhost:3000';
+const baseURL = process.env.URL || 'https://cloudfix-api.herokuapp.com';
 
 const axiosRequest = axios.create({
     baseURL,

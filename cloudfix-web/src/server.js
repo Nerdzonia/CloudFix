@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({path: '../'});
 const express = require('express');
 const next = require('next');
 

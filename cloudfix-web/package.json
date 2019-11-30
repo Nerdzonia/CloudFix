@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "node ./src/server.js",
     "build": "next build ./src",
-    "start": "SET NODE_ENV=production & next start ./server.js"
+    "start": "SET NODE_ENV=production & next start ./server.js -p $PORT"
   },
   "repository": "https://github.com/Nerdzonia/CloudFix.git",
   "author": "raidou12 <icarodaviduarte@gmail.com>",
