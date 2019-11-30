@@ -1,9 +1,30 @@
 const express = require('express');
 const Joi = require('@hapi/joi');
+const lang = require('../utils/joiPtBr');
 
+// const middlewareAuth = require('../middlewares/auth');
 const { changePassword, login, resetPassword, registerNewUser } = require('../repository/auth');
 
 const router = express.Router();
+
+router.post('/authenticate', async (req, res) => {
+    try {
+        const schema = Joi.object().options({ language: { ...lang } }).keys({
+            email: Joi.string().trim().email().required(),
+            password: Joi.string().required()
+        });
+        Joi.validate(req.body, schema, async (err, result) => {
+            if (err)
+                return res.status(400).send({ error: "Cheque se campos os estão corretos!" });
+
+            login(res, result);
+        });
+    } catch (err) {
+        res.status(400).send({ error: `Failed to authenticate ${err}` });
+    }
+});
+
+// router.use(middlewareAuth);
 
 router.post('/register', async (req, res) => {
     try {
@@ -24,23 +45,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/authenticate', async (req, res) => {
-    try {
-        const schema = Joi.object().keys({
-            email: Joi.string().trim().email().required(),
-            password: Joi.string().required()
-        });
-
-        Joi.validate(req.body, schema, async (err, result) => {
-            if (err)
-                return res.status(400).send({ error: `Validate error ${err}` });
-
-            login(res, result);
-        });
-    } catch (err) {
-        res.status(400).send({ error: `Failed to authenticate ${err}` });
-    }
-});
 
 router.post('/change_password', async (req, res) => {
     try {

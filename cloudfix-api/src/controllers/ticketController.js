@@ -86,6 +86,8 @@ router.post('/newTicket', upload, async (req, res) => {
     }
 });
 
+router.use(require('../middlewares/auth'));
+
 router.post('/updateTicket', upload, async (req, res) => {
     try {
         const schema = Joi.object().keys({

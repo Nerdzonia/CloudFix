@@ -81,20 +81,17 @@ const login = async (res, result) => {
         const user = await User.findOne({ email }).select('+password');
 
         if (!user)
-            return res.status(400).send({ error: 'User not found!' });
+            return res.status(400).send({ error: 'Usuário não encontrado!' });
 
         if (!await bcrypt.compare(password + HASH, user.password))
-            return res.status(400).send({ error: 'Invalid password!' });
+            return res.status(400).send({ error: 'Senha invalida!' });
 
         user.password = undefined;
 
         const token = await generateToken({ id: user.id }, HASH);
 
         return res.send({
-            data: {
-                user,
-                token,
-            }
+            token
         });
     } catch (err) {
         return err;
