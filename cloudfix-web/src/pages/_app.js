@@ -3,6 +3,8 @@ import App, { Container } from 'next/app';
 import Head from 'next/head';
 
 import 'semantic-ui-css/semantic.min.css';
+import 'react-date-range/dist/theme/default.css';
+import 'react-date-range/dist/styles.css';
 
 class MyApp extends App {
     static async getInitialProps({ Component, ctx }) {

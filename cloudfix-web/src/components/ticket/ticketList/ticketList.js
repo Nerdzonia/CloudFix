@@ -1,6 +1,3 @@
-import 'react-date-range/dist/theme/default.css';
-import 'react-date-range/dist/styles.css';
-
 import React, { useState, useEffect } from "react";
 import Router from 'next/router';
 import Link from "next/link";
