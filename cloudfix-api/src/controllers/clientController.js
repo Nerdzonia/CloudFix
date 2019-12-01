@@ -1,8 +1,11 @@
 const express = require('express');
 
 const { listClientTicketById, listAllClients } = require('../repository/client');
+const middlewareAuth = require('../middlewares/auth');
 
 const router = express.Router();
+
+router.use(middlewareAuth);
 
 router.get('/listAll', async (req, res) => {
     try {

@@ -86,6 +86,40 @@ router.post('/newTicket', upload, async (req, res) => {
     }
 });
 
+router.get('/show/:id', async (req, res) => {
+    try {
+        const schema = Joi.object().keys({
+            id: Joi.string().required()
+        });
+        Joi.validate(req.params, schema, (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
+
+            findTicketById(res, result.id, 'chat');
+        })
+    } catch (err) {
+        res.status(400).send({ error: `Cannot find ticket ${err}` })
+    }
+});
+
+router.post('/addMessage/:id', async (req, res) => {
+    try {
+        const schema = Joi.object().keys({
+            name: Joi.string().required(),
+            message: Joi.string().required()
+        });
+
+        Joi.validate(req.body, schema, async (err, result) => {
+            if (err)
+                return res.status(400).send({ error: `Erro on send a message ${err}` });
+
+            addMessageTicket(res, req.params.id, result);
+        });
+    } catch (err) {
+        return res.status(400).send({ error: `Failed send message ${err}` });
+    }
+});
+
 router.use(require('../middlewares/auth'));
 
 router.post('/updateTicket', upload, async (req, res) => {
@@ -159,40 +193,6 @@ router.get('/updateStatus/:status', async (req, res) => {
         })
     } catch (err) {
         res.status(400).send({ error: `Não pode achar o ticket ${err}` })
-    }
-});
-
-router.get('/show/:id', async (req, res) => {
-    try {
-        const schema = Joi.object().keys({
-            id: Joi.string().required()
-        });
-        Joi.validate(req.params, schema, (err, result) => {
-            if (err)
-                return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
-
-            findTicketById(res, result.id, 'chat');
-        })
-    } catch (err) {
-        res.status(400).send({ error: `Cannot find ticket ${err}` })
-    }
-});
-
-router.post('/addMessage/:id', async (req, res) => {
-    try {
-        const schema = Joi.object().keys({
-            name: Joi.string().required(),
-            message: Joi.string().required()
-        });
-
-        Joi.validate(req.body, schema, async (err, result) => {
-            if (err)
-                return res.status(400).send({ error: `Erro on send a message ${err}` });
-
-            addMessageTicket(res, req.params.id, result);
-        });
-    } catch (err) {
-        return res.status(400).send({ error: `Failed send message ${err}` });
     }
 });
 

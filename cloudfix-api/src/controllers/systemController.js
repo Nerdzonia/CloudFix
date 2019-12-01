@@ -3,6 +3,9 @@ const Joi = require('@hapi/joi');
 
 const lang = require('../utils/joiPtBr');
 const { add, findAll, remove } = require('../repository/system');
+const middlewareAuth = require('../middlewares/auth');
+
+router.use(middlewareAuth);
 
 router.post('/add', async (req, res) => {
     const schema = Joi.object().options({language: {...lang}}).keys({

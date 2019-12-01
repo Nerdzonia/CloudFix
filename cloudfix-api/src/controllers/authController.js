@@ -59,7 +59,6 @@ router.post('/change_password', async (req, res) => {
             changePassword(res, result);
         });
     } catch (error) {
-        console.log(error)
         res.status(400).send({ error: 'Error on try change password!' });
     }
 });
