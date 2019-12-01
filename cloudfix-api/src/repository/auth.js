@@ -120,9 +120,16 @@ const registerNewUser = async (res, result) => {
         return res.status(400).send({ error: `Falha ao registrar novo usuário! ${err}` });
     }
 
-    const authenticate = async (id) => {
+}
+
+const authenticate = async (res, id) => {
+    try{
         const data = await User.findById(id);
+
         return !!data;
+    }catch(err){
+        // return res.status(401).send({error: 'Token invalido.'});
+        return false;
     }
 }
 

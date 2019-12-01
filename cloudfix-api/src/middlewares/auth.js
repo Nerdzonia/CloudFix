@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const HASH = process.env.HASH || 'DefaultHash';
 
+const { authenticate } = require('../repository/auth');
+
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization;
     
@@ -17,11 +19,13 @@ module.exports = (req, res, next) => {
     if(!/^Bearer$/i.test(scheme))
         return res.status(401).send({ error: 'Token malformatted!' });
 
-    jwt.verify(token, HASH, (err, decoded) => {
+    jwt.verify(token, HASH, async (err, decoded) => {
         if(err) 
             return res.status(401).send({ error: 'Token invalid!' });
-
+            
         req.userId = decoded.id;
-        return next();
+
+        if(await authenticate(res, decoded.id)) return next();
+        else return res.status(401).send({error: 'Token invalido.'});
     });
 };
