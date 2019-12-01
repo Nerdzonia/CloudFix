@@ -5,6 +5,10 @@ const lang = require('../utils/joiPtBr');
 const { add, findAll, remove } = require('../repository/system');
 const middlewareAuth = require('../middlewares/auth');
 
+router.get('/listAll', (req, res) => {
+    findAll(res);
+});
+
 router.use(middlewareAuth);
 
 router.post('/add', async (req, res) => {
@@ -17,10 +21,6 @@ router.post('/add', async (req, res) => {
             return res.status(400).send({error: `Erro ao salvar um novo sistema ${err}`});
         add(res, result);
     });
-});
-
-router.get('/listAll', (req, res) => {
-    findAll(res);
 });
 
 router.get('/remove/:id', (req, res) => {
