@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Header, Container, Segment, Divider, Form, Grid, Button } from 'semantic-ui-react';
 
 const MessageContainer = ({ message }) => (
@@ -6,37 +7,39 @@ const MessageContainer = ({ message }) => (
     </p>
 );
 
-const [input, setInput] = useState({
-    message: ''
-});
-  
-const [checkInput, setCheckInput] = useState({
-    message: false
-});
 
 const sendMessage = async () => {
-    let check = {};
-
-    let validateInputs = Object.keys(check).every(element => {
-      return check[element] === false;
-    });
-
-    if (validateInputs) {
-      setLoad(true);
-      
-      let data = await TicketRequestor.addMensage(input);
-
+  let check = {};
+  
+  let validateInputs = Object.keys(check).every(element => {
+    return check[element] === false;
+  });
+  
+  if (validateInputs) {
+    setLoad(true);
+    
+    let data = await TicketRequestor.addMensage(input);
+    
       if (!data.error) {
         Router.push(`/ticket?id=${data.id}`, '/ticket');
       } else {
         setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
       }
-
+      
       setLoad(false);
     }
   }
+  
+  const MyTicket = (props) => {
 
-const MyTicket = (props) => {
+    const [input, setInput] = useState({
+        message: ''
+    });
+      
+    const [checkInput, setCheckInput] = useState({
+        message: false
+    });
+
     const {
         name,
         system,
@@ -45,6 +48,7 @@ const MyTicket = (props) => {
         images,
         chat
     } = props.ticket;
+    console.log(chat)
     return (
         <Container style={{ paddingBottom: "5em" }} textAlign='center'>
             <Header as='h1' block>
@@ -83,7 +87,7 @@ const MyTicket = (props) => {
                           error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
                           name='message'
                           value={input.message}
-                          onChange={handleFildsChange}
+                          // onChange={handleFildsChange}
                         />
                       </Form.Field>
                     </Form.Group>
@@ -97,9 +101,9 @@ const MyTicket = (props) => {
                         content="Enviar mensagem"
                         icon="check"
                         labelPosition="right"
-                        onClick={sendMessage}
-                        disabled={load}
-                        loading={load}
+                        // onClick={sendMessage}
+                        // disabled={load}
+                        // loading={load}
                       ></Button>
                     </Button.Group>
                   </Grid.Column>

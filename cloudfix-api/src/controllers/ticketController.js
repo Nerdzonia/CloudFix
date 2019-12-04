@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { existsSync, mkdirSync } = require('fs');
 const Joi = require('@hapi/joi');
+const jwt = require('jsonwebtoken');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -23,6 +24,7 @@ const upload = multer({
 
 const lang = require('../utils/joiPtBr');
 const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket, advancedSearch } = require('../repository/ticket');
+const { findById } = require('../repository/User');
 const { uploadImage } = require('../config/cloudinary');
 
 const router = express.Router();
@@ -102,20 +104,47 @@ router.get('/show/:id', async (req, res) => {
     }
 });
 
-router.post('/addMessage/:id', async (req, res) => {
+router.post('/addMessage', async (req, res) => {
     try {
         const schema = Joi.object().keys({
-            name: Joi.string().required(),
+            ticketId: Joi.string().required(),
+            name: Joi.string(),
             message: Joi.string().required()
         });
 
         Joi.validate(req.body, schema, async (err, result) => {
             if (err)
-                return res.status(400).send({ error: `Erro on send a message ${err}` });
+                return res.status(400).send({ error: `Erro ao enviar mensagem ${err}` });
 
-            addMessageTicket(res, req.params.id, result);
+            const authHeader = req.headers.authorization;
+            if (authHeader) {
+                const parts = authHeader.split(' ');
+            
+                if (parts.length === 2) {
+                    if (parts[1]) {
+                        const [scheme, token] = parts;
+                        const HASH = process.env.HASH || 'DefaultHash';
+
+                        jwt.verify(token, HASH, async (err, decoded) => {
+                            if (err)
+                                return res.status(401).send({ error: 'Token invalid!' });
+
+                            const data = await findById(decoded.id);
+                            result.name = data.name;
+                            addMessageTicket(res, result.ticketId, result);
+                        });
+                    } else{
+                        addMessageTicket(res, result.ticketId, result);
+                    }
+                } else {
+                    return res.status(400).send({ error: 'Sem autorização' });
+                }
+            } else {
+                return res.status(400).send({ error: 'Sem autorização' });
+            }
         });
     } catch (err) {
+        console.log(err)
         return res.status(400).send({ error: `Failed send message ${err}` });
     }
 });
@@ -162,7 +191,7 @@ router.post('/advancedSearch', async (req, res) => {
             if (!!result.status) {
                 if (Object.keys(ENUM).some(e => ENUM[e] === result.status))
                     advancedSearch(res, result);
-                else    
+                else
                     res.status(400).send({ error: `Status invalido` });
             } else {
                 advancedSearch(res, result);
