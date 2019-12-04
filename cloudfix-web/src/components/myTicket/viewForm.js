@@ -45,6 +45,8 @@ const sendMessage = async () => {
         system,
         title,
         message,
+        status,
+        updatedAt,
         images,
         chat
     } = props.ticket;
@@ -76,37 +78,39 @@ const sendMessage = async () => {
                 <Divider/>
                 <Segment>
                     <Header>Chat:</Header>
+                      <Grid.Row>
+                        <Grid.Column>
+                      <Form.Group>
+                        <Form.Field required width={11} >
+                          <Form.TextArea
+                            style={{ minHeight: 200 }}
+                            icon="comment alternate outline"
+                            iconposition="left"
+                            placeholder="Digite uma mensagem..."
+                            error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
+                            name='message'
+                            value={input.message}
+                            // onChange={handleFildsChange}
+                          />
+                        </Form.Field>
+                      </Form.Group>
+                    </Grid.Column>
                     <Grid.Column>
-                    <Form.Group>
-                      <Form.Field required width={11} >
-                        <Form.TextArea
-                          style={{ minHeight: 200 }}
-                          icon="comment alternate outline"
-                          iconposition="left"
-                          placeholder="Digite uma mensagem..."
-                          error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
-                          name='message'
-                          value={input.message}
-                          // onChange={handleFildsChange}
-                        />
-                      </Form.Field>
-                    </Form.Group>
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Button.Group floated="right">
-                      <Button>Cancelar</Button>
-                      <Button.Or text="ou" />
-                      <Button
-                        positive
-                        content="Enviar mensagem"
-                        icon="check"
-                        labelPosition="right"
-                        // onClick={sendMessage}
-                        // disabled={load}
-                        // loading={load}
-                      ></Button>
-                    </Button.Group>
-                  </Grid.Column>
+                      <Button.Group floated="right">
+                        <Button>Cancelar</Button>
+                        <Button.Or text="ou" />
+                        <Button
+                          positive
+                          content="Enviar mensagem"
+                          icon="check"
+                          labelPosition="right"
+                          // onClick={sendMessage}
+                          // disabled={load}
+                          // loading={load}
+                        ></Button>
+                      </Button.Group>
+                    </Grid.Column>
+                  </Grid.Row>
 
                 </Segment>
             </Container>
