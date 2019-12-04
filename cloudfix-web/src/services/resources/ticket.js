@@ -24,14 +24,6 @@ class Ticket {
 
     sendTicket = async (object) => {
         try {
-            /*{
-                email: string required,
-                name: string required,
-                title: string required,
-                system: string required,
-                file: binary,
-                message: string min 5 required,
-            }*/
             const form = new FormData();
             Object.keys(object).forEach(element => {
                 if (element === 'image')
@@ -41,6 +33,25 @@ class Ticket {
             });
 
             let { data } = await axiosRequestor.post(`${this.baseUrl}/newTicket`, form, {
+                headers: {
+                    'Content-type': 'multipart/form-data'
+                }
+            });
+
+            return data;
+        } catch (err) {
+            return err.response.data;
+        }
+    }
+
+    addMessage = async (object) => {
+        try {
+            const form = new FormData();
+            Object.keys(object).forEach(element => {
+                    form.append(element, object[element]);
+            });
+
+            let { data } = await axiosRequestor.post(`${this.baseUrl}/addMessage`, form, {
                 headers: {
                     'Content-type': 'multipart/form-data'
                 }
