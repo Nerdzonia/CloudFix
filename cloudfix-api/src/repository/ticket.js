@@ -17,15 +17,15 @@ const updateTicket = async (body, res) => {
             if (err || !doc)
                 return res.status(400).send({ error: 'Erro ao tentar achar o ticket' });
 
-                let templateLink = './src/resources/mail/email_update_template.ejs';
+            let templateLink = './src/resources/mail/email_update_template.ejs';
 
-                const sendEmailLink = convertToHtmlAndSendMail(
-                    { link: `${process.env.WEB_LINK}?id=${doc.id}` },
-                    { ...mailerTemplate, to: doc.email,  },
-                    templateLink
-                );
-        
-                update(Ticket, body, res, sendEmailLink);
+            const sendEmailLink = convertToHtmlAndSendMail(
+                { link: `${process.env.WEB_LINK}?id=${doc.id}` },
+                { ...mailerTemplate, to: doc.email, },
+                templateLink
+            );
+
+            update(Ticket, body, res, sendEmailLink);
         });
     } catch (err) {
         return res.status(400).send({ error: 'Erro ao tentar atualizar o ticket' });
@@ -38,13 +38,13 @@ const listAllTicket = async (res, populate, page) => {
             page: page || 1,
             limit: 5,
             populate: Object.entries(populate).length !== 0 ? populate : ''
-          };
+        };
 
         await Ticket.paginate({}, options, (err, result) => {
-            if(err)
+            if (err)
                 return res.status(400).send({ error: `Erro ao tentar paginar: ${error}` });
 
-            return res.send({data: {...result}});
+            return res.send({ data: { ...result } });
         })
         // listAll(Ticket, res, populate);
     } catch (err) {
@@ -107,7 +107,7 @@ const saveTicket = async (res, result) => {
             images
         });
 
-        const mailer = {...mailerTemplate, to: email};
+        const mailer = { ...mailerTemplate, to: email };
 
         let templatePath = './src/resources/mail/email_template.ejs';
 
@@ -154,37 +154,103 @@ const saveTicket = async (res, result) => {
 
 }
 
-const advancedSearch = async (res, result) => {
-    try{
+const searcByCriteria = async (res, result) => {
+    try {
         let query = {};
 
-        Object.keys(result).map(e => {
-            switch (e) {
-                case 'startAt':
-                    query['updatedAt'] = { ...query['updatedAt'], $gte: `${result[e]}` };
-                    break;
-                case 'endsAt':
-                    query['updatedAt'] = { ...query['updatedAt'], $lte:`${result[e]}` };
-                    break;
-                case 'name':
-                    query[e] = new RegExp(`.*${result[e]}.*`, 'i');
-                    break;
-                default:
-                    query[e] = result[e];
-                    break;
+        let options = {
+            page: 1,
+            limit: 5
+            // populate: Object.entries(populate).length !== 0 ? populate : ''
+        };
+
+        const SORT_ENUM = { ascending: 'asc', descending: 'desc' }
+
+        if (result.pagination) {
+            if (result.pagination.hasOwnProperty('sort') && !Object.keys(SORT_ENUM).some(e => (SORT_ENUM[e] === result.pagination.sort)))
+                return res.status(400).send({ error: 'Valor sort invalido, aceita apenas asc ou desc' });
+            else
+                Object.keys(result.pagination).map(e => {
+                    switch (e) {
+                        case 'sort':
+                            options.sort = { [result.pagination.column]: result.pagination.sort }
+                            break;
+                            case 'page':
+                                options.page = result.pagination.page
+                            break;
+                        case 'limit':
+                            options[e] = result.pagination[e]
+                            break;
+                    }
+                });
+        }
+
+
+        if (result.query)
+            Object.keys(result.query).map(e => {
+                switch (e) {
+                    case 'startAt':
+                        query['updatedAt'] = { ...query['updatedAt'], $gte: `${result.query[e]}` };
+                        break;
+                    case 'endsAt':
+                        query['updatedAt'] = { ...query['updatedAt'], $lte: `${result.query[e]}` };
+                        break;
+                    case 'name':
+                        query[e] = new RegExp(`.*${result.query[e]}.*`, 'i');
+                        break;
+                    default:
+                        query[e] = result.query[e];
+                        break;
                 }
             });
             
-        const data = await Ticket.find(query) || [];
-            
-        if(data.length !== 0)
-            res.send({data: data});
-        else
-            res.status(400).send({error: 'Sem resultado na busca avançada do ticket.'});
-    }catch(err){
-        return res.status(400).send({error: 'Ocorreu algum erro ao fazer busca avançada no ticket.'});
+        await Ticket.paginate(query, options, (err, doc) => {
+            if (err)
+                return res.status(400).send({ error: 'Erro na busca avançada do ticket.' });
+
+            if (doc)
+                return res.send({ data: { ...doc } });
+            else
+                return res.status(400).send({ error: 'Sem resultado na busca avançada do ticket.' });
+        });
+
+    } catch (err) {
+        console.log(err)
+        return res.status(400).send({ error: 'Ocorreu algum erro ao fazer busca avançada no ticket.' });
     }
 }
+
+// const searcByCriteria = async (res, result) => {
+//     try{
+//         let query = {};
+
+//         Object.keys(result).map(e => {
+//             switch (e) {
+//                 case 'startAt':
+//                     query['updatedAt'] = { ...query['updatedAt'], $gte: `${result[e]}` };
+//                     break;
+//                 case 'endsAt':
+//                     query['updatedAt'] = { ...query['updatedAt'], $lte:`${result[e]}` };
+//                     break;
+//                 case 'name':
+//                     query[e] = new RegExp(`.*${result[e]}.*`, 'i');
+//                     break;
+//                 default:
+//                     query[e] = result[e];
+//                     break;
+//                 }
+//             });
+
+//         const data = await Ticket.find(query) || [];
+
+//         if(data.length !== 0)
+//             res.send({data: data});
+//         else
+//             res.status(400).send({error: 'Sem resultado na busca avançada do ticket.'});
+//     }catch(err){
+//         return res.status(400).send({error: 'Ocorreu algum erro ao fazer busca avançada no ticket.'});
+//     }
+// }
 
 module.exports = {
     updateTicket,
@@ -192,5 +258,5 @@ module.exports = {
     findTicketById,
     addMessageTicket,
     saveTicket,
-    advancedSearch
+    searcByCriteria
 }

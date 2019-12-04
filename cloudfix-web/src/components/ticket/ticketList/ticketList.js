@@ -13,7 +13,8 @@ import {
   Button,
   Input,
   Breadcrumb,
-  Header
+  Header,
+  Pagination
 } from "semantic-ui-react";
 import { DateRange } from 'react-date-range';
 import * as rdrLocales from "react-date-range/dist/locale";
@@ -22,7 +23,7 @@ import ticketRequestor from '../../../services/resources/ticket';
 
 moment.locale('pt-BR')
 import SystemSelect from '../../utils/SystemSelect';
-import ticket from "../../../services/resources/ticket";
+// import ticket from "../../../services/resources/ticket";
 
 const statusSearch = [
   {
@@ -100,57 +101,73 @@ const TicketList = (props) => {
       direction: direction === 'ascending' ? 'descending' : 'ascending',
     });
   }
-  const { column, direction, data } = sort;
-
+  
   const [selectionRange, setSelectionRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
     key: 'selection',
   });
-
+  
   const handleSelect = (date) => {
     setSelectionRange({
       ...selectionRange,
       ...date.selection
     })
   }
-
+  
   const [ticketPaginate, setTicketPaginate] = useState(ticketList);
+  
+  const paginate = async (paginationInfo) => {
 
-  const paginate = async (page) => {
-    await ticketRequestor.getAllTickets(page).then(ticket => {
-      setTicketPaginate({
-        ...ticket.data
-      });
-      setSort({
-        ...sort,
-        data: ticket.data.docs
-      });
-    });
-  }
-
-  const paginationButtons = () => {
-
-    const buttons = [];
-    buttons.push(
-      <Menu.Item as="a" icon onClick={() => ticketPaginate.prevPage ? paginate(ticketPaginate.prevPage) : null }>
-        <Icon name="chevron left" />
-      </Menu.Item>
-    );
-
-    for (let i = 1; ticketPaginate.totalPages >= i; i++) {
-      buttons.push(
-        <Menu.Item as="a" active={i === ticketPaginate.page} onClick={() => paginate(i)}>{i}</Menu.Item>)
+    let pagination = {
+      page: paginationInfo.activePage,
     }
 
-    buttons.push(
-      <Menu.Item as="a" icon onClick={() => ticketPaginate.nextPage ? paginate(ticketPaginate.nextPage) : null}>
-        <Icon name="chevron right" />
-      </Menu.Item>
-    );
+    let query = {
 
-    return buttons
+    }
+
+    sort.column !== null ? pagination.column = sort.column : null;
+    sort.direction === 'ascending' ? pagination.sort = 'asc' : sort.direction === 'descending' ? pagination.sort = 'desc' : null;
+    
+    await ticketRequestor.getAllTickets({pagination}).then(ticket => {
+      if(ticket.data){
+        setSort({
+          ...sort,
+          data: ticket.data.docs
+        });
+        setTicketPaginate({
+          ...ticket.data
+        });
+      } else {
+        console.error(ticket.error)
+      }
+    });
   }
+  
+  const { column, direction, data } = sort;
+  // const paginationButtons = () => {
+
+  //   const buttons = [];
+  //   buttons.push(
+  //     <Menu.Item as="a" icon onClick={() => ticketPaginate.prevPage ? paginate(ticketPaginate.prevPage) : null}>
+  //       <Icon name="chevron left" />
+  //     </Menu.Item>
+  //   );
+
+  //   for (let i = 1; ticketPaginate.totalPages >= i; i++) {
+  //     buttons.push(
+  //       <Menu.Item as="a" active={i === ticketPaginate.page} onClick={() => paginate(i)}>{i}</Menu.Item>)
+  //   }
+
+  //   buttons.push(
+  //     <Menu.Item as="a" icon onClick={() => ticketPaginate.nextPage ? paginate(ticketPaginate.nextPage) : null}>
+  //       <Icon name="chevron right" />
+  //     </Menu.Item>
+  //   );
+
+  //   return buttons
+  // }
 
   return (
     <Grid container centered columns={1}>
@@ -261,9 +278,15 @@ const TicketList = (props) => {
                             <Grid.Row>
 
                               {/* QUANDO ALGUM TICKET FOR SELECIONADO CheckedTicketsOptions DEVE SER MOSTRADO*/}
-
-                              <Menu floated="right" pagination>
-                                {paginationButtons()}
+                              <Menu floated="right">
+                                <Pagination
+                                  defaultActivePage={1}
+                                  firstItem={null}
+                                  lastItem={null}
+                                  siblingRange={1}
+                                  totalPages={ticketPaginate.totalPages}
+                                  onPageChange={(mouseEvent, data) => paginate(data)}
+                                />
                               </Menu>
 
                             </Grid.Row>
