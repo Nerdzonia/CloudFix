@@ -1,4 +1,5 @@
 const { mongoose } = require('../config/database');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const TicketSchema = new mongoose.Schema({
     name: {
@@ -29,6 +30,8 @@ const TicketSchema = new mongoose.Schema({
         default: 'open'
     },
 }, {timestamps: true});
+
+TicketSchema.plugin(mongoosePaginate);
 
 const ticket = mongoose.model('Ticket', TicketSchema);
 

@@ -18,9 +18,11 @@ import {
 import { DateRange } from 'react-date-range';
 import * as rdrLocales from "react-date-range/dist/locale";
 import * as moment from 'moment';
+import ticketRequestor from '../../../services/resources/ticket';
 
 moment.locale('pt-BR')
 import SystemSelect from '../../utils/SystemSelect';
+import ticket from "../../../services/resources/ticket";
 
 const statusSearch = [
   {
@@ -52,7 +54,7 @@ const Row = (id, status, system, title, updatedAt, index) => (
     <Table.Cell>{title}</Table.Cell>
     <Table.Cell>{moment(updatedAt).fromNow()}</Table.Cell>
     <Table.Cell>
-    
+
       <Button.Group>
         <Button basic icon='check circle' color='green' />
         <Button basic icon='external square alternate' color='blue' onClick={() => Router.push({
@@ -75,7 +77,7 @@ const TicketList = (props) => {
 
   const [sort, setSort] = useState({
     column: null,
-    data: ticketList,
+    data: ticketList.docs,
     direction: null,
   });
 
@@ -106,13 +108,50 @@ const TicketList = (props) => {
     key: 'selection',
   });
 
-  const handleSelect = (date) =>{
+  const handleSelect = (date) => {
     setSelectionRange({
       ...selectionRange,
       ...date.selection
     })
   }
-  
+
+  const [ticketPaginate, setTicketPaginate] = useState(ticketList);
+
+  const paginate = async (page) => {
+    await ticketRequestor.getAllTickets(page).then(ticket => {
+      setTicketPaginate({
+        ...ticket.data
+      });
+      setSort({
+        ...sort,
+        data: ticket.data.docs
+      });
+    });
+  }
+
+  const paginationButtons = () => {
+
+    const buttons = [];
+    buttons.push(
+      <Menu.Item as="a" icon onClick={() => ticketPaginate.prevPage ? paginate(ticketPaginate.prevPage) : null }>
+        <Icon name="chevron left" />
+      </Menu.Item>
+    );
+
+    for (let i = 1; ticketPaginate.totalPages >= i; i++) {
+      buttons.push(
+        <Menu.Item as="a" active={i === ticketPaginate.page} onClick={() => paginate(i)}>{i}</Menu.Item>)
+    }
+
+    buttons.push(
+      <Menu.Item as="a" icon onClick={() => ticketPaginate.nextPage ? paginate(ticketPaginate.nextPage) : null}>
+        <Icon name="chevron right" />
+      </Menu.Item>
+    );
+
+    return buttons
+  }
+
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={16}>
@@ -162,26 +201,26 @@ const TicketList = (props) => {
                 {isActive
                   ? <Segment>
                     <Form>
-                        <Form.Group widths='equal'>
-                          <Form.Select options={statusSearch} fluid label='Status:' placeholder='Aberto' />
-                          
-                          {/*trazer select com nome de clientes */}
-                          <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
-                          
-                          {/*systemselect*/}
-                          <SystemSelect
-                            placeholder="selecione o sistema"
-                            label="Sistema:"
-                          />
+                      <Form.Group widths='equal'>
+                        <Form.Select options={statusSearch} fluid label='Status:' placeholder='Aberto' />
+
+                        {/*trazer select com nome de clientes */}
+                        <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
+
+                        {/*systemselect*/}
+                        <SystemSelect
+                          placeholder="selecione o sistema"
+                          label="Sistema:"
+                        />
 
                       </Form.Group>
                       <Form.Group widths="equal">
                         <DateRange
                           locale={rdrLocales.pt}
-                          
+
                           ranges={[selectionRange]}
                           onChange={handleSelect}
-                        
+
                         />
                       </Form.Group>
                     </Form>
@@ -224,14 +263,7 @@ const TicketList = (props) => {
                               {/* QUANDO ALGUM TICKET FOR SELECIONADO CheckedTicketsOptions DEVE SER MOSTRADO*/}
 
                               <Menu floated="right" pagination>
-                                <Menu.Item as="a" icon>
-                                  <Icon name="chevron left" />
-                                </Menu.Item>
-                                <Menu.Item as="a">1</Menu.Item>
-                                <Menu.Item as="a">2</Menu.Item>
-                                <Menu.Item as="a" icon>
-                                  <Icon name="chevron right" />
-                                </Menu.Item>
+                                {paginationButtons()}
                               </Menu>
 
                             </Grid.Row>
