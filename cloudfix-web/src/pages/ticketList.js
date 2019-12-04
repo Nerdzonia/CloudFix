@@ -33,13 +33,13 @@ class Index extends React.Component {
     // }
 
     componentDidMount() {
-        apiRequestor.getAllTickets().then(
+        apiRequestor.getAllTickets({}).then(
             data => {
                 if (!data.error) {
                     this.setState({ ticketList: data });
                 } else {
                     Router.push('/admin');
-                    removeToken('token');
+                    // removeToken('token');
                 }
             }
         );

@@ -167,7 +167,7 @@ const searcByCriteria = async (res, result) => {
         const SORT_ENUM = { ascending: 'asc', descending: 'desc' }
 
         if (result.pagination) {
-            if (!Object.keys(SORT_ENUM).some(e => (SORT_ENUM[e] === result.pagination.sort)))
+            if (result.pagination.hasOwnProperty('sort') && !Object.keys(SORT_ENUM).some(e => (SORT_ENUM[e] === result.pagination.sort)))
                 return res.status(400).send({ error: 'Valor sort invalido, aceita apenas asc ou desc' });
             else
                 Object.keys(result.pagination).map(e => {
@@ -175,8 +175,8 @@ const searcByCriteria = async (res, result) => {
                         case 'sort':
                             options.sort = { [result.pagination.column]: result.pagination.sort }
                             break;
-                        case 'page':
-                            options.page = result.pagination.page
+                            case 'page':
+                                options.page = result.pagination.page
                             break;
                         case 'limit':
                             options[e] = result.pagination[e]
@@ -203,16 +203,13 @@ const searcByCriteria = async (res, result) => {
                         break;
                 }
             });
-        console.log(query, 'query')
-
-        console.log(options, 'opitions');
+            
         await Ticket.paginate(query, options, (err, doc) => {
-            console.log(err)
             if (err)
                 return res.status(400).send({ error: 'Erro na busca avançada do ticket.' });
 
             if (doc)
-                return res.send({ data: { docs: doc.docs } });
+                return res.send({ data: { ...doc } });
             else
                 return res.status(400).send({ error: 'Sem resultado na busca avançada do ticket.' });
         });
