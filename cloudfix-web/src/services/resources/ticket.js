@@ -13,9 +13,9 @@ class Ticket {
     }
 
     //listar todos os tickets
-    getAllTickets = async () => {
+    getAllTickets = async (page) => {
         try {
-            let { data } = await axiosRequestor.get(`${this.baseUrl}/listAll`);
+            let { data } = await axiosRequestor.get(`${this.baseUrl}/listAll/${page || 1}`);
             return data;
         } catch (err) {   
             return err.response.data;

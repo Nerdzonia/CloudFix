@@ -32,9 +32,21 @@ const updateTicket = async (body, res) => {
     }
 }
 
-const listAllTicket = (res, populate) => {
+const listAllTicket = async (res, populate, page) => {
     try {
-        listAll(Ticket, res, populate);
+        const options = {
+            page: page || 1,
+            limit: 5,
+            populate: Object.entries(populate).length !== 0 ? populate : ''
+          };
+
+        await Ticket.paginate({}, options, (err, result) => {
+            if(err)
+                return res.status(400).send({ error: `Erro ao tentar paginar: ${error}` });
+
+            return res.send({data: {...result}});
+        })
+        // listAll(Ticket, res, populate);
     } catch (err) {
         return res.status(400).send({ error: 'Erro ao listar tickets ' });
     }
