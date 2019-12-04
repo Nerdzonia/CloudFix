@@ -23,7 +23,7 @@ const upload = multer({
 }).array("file", 5);
 
 const lang = require('../utils/joiPtBr');
-const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket, advancedSearch } = require('../repository/ticket');
+const { updateTicket, saveTicket, findTicketById, addMessageTicket, listAllTicket, searcByCriteria } = require('../repository/ticket');
 const { findById } = require('../repository/User');
 const { uploadImage } = require('../config/cloudinary');
 
@@ -119,7 +119,7 @@ router.post('/addMessage', async (req, res) => {
             const authHeader = req.headers.authorization;
             if (authHeader) {
                 const parts = authHeader.split(' ');
-            
+
                 if (parts.length === 2) {
                     if (parts[1]) {
                         const [scheme, token] = parts;
@@ -133,7 +133,7 @@ router.post('/addMessage', async (req, res) => {
                             result.name = data.name;
                             addMessageTicket(res, result.ticketId, result);
                         });
-                    } else{
+                    } else {
                         addMessageTicket(res, result.ticketId, result);
                     }
                 } else {
@@ -173,13 +173,22 @@ router.post('/updateTicket', upload, async (req, res) => {
     }
 });
 
-router.post('/advancedSearch', async (req, res) => {
+router.post('/searcByCriteria', async (req, res) => {
     try {
         const schema = Joi.object().keys({
-            name: Joi.string(),
-            status: Joi.string(),
-            startAt: Joi.date(),
-            endsAt: Joi.date()
+            query: {
+                name: Joi.string(),
+                status: Joi.string(),
+                startAt: Joi.date(),
+                endsAt: Joi.date(),
+
+            },
+            pagination: {
+                sort: Joi.string(),
+                column: Joi.string(),
+                page: Joi.number(),
+                limit: Joi.number(),
+            }
         });
 
         Joi.validate(req.body, schema, (err, result) => {
@@ -190,11 +199,11 @@ router.post('/advancedSearch', async (req, res) => {
 
             if (!!result.status) {
                 if (Object.keys(ENUM).some(e => ENUM[e] === result.status))
-                    advancedSearch(res, result);
+                    searcByCriteria(res, result);
                 else
                     res.status(400).send({ error: `Status invalido` });
             } else {
-                advancedSearch(res, result);
+                searcByCriteria(res, result);
             }
         });
     } catch (error) {
@@ -225,15 +234,15 @@ router.get('/updateStatus/:status', async (req, res) => {
     }
 });
 
-router.get('/listAll/:page', async (req, res) => {
-    try {
-        listAllTicket(res, {
-            path: 'tickets',
-            populate: 'chat'
-        }, req.params.page);
-    } catch (error) {
-        return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
-    }
-});
+// router.post('/listAll', async (req, res) => {
+//     try {
+//         listAllTicket(res, {
+//             path: 'tickets',
+//             populate: 'chat'
+//         }, req.params.page);
+//     } catch (error) {
+//         return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
+//     }
+// });
 
 module.exports = app => app.use('/ticket', router);
