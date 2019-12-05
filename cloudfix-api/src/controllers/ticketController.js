@@ -178,6 +178,7 @@ router.post('/searcByCriteria', async (req, res) => {
         const schema = Joi.object().keys({
             query: {
                 name: Joi.string(),
+                system: Joi.string(),
                 status: Joi.string(),
                 startAt: Joi.date(),
                 endsAt: Joi.date(),
