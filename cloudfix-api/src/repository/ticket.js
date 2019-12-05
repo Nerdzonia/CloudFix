@@ -85,7 +85,7 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
                     if (err)
                         return res.status(400).send({ error: `Error on save message in ticket ${err}` });
                 });
-                return res.send({ doc });
+                return res.send({ data: doc });
             } else {
                 res.status(400).send({ error: 'Ticket not valid wrong id' });
             }
