@@ -15,6 +15,7 @@ class Ticket {
     //listar todos os tickets
     getAllTickets = async (criteria = {}) => {
         try {
+            console.log(criteria, 'criteria')
             let { data } = await axiosRequestor.post(`${this.baseUrl}/searcByCriteria`, criteria); 
             return data;
         } catch (err) {   
