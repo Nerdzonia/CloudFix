@@ -15,9 +15,11 @@ import TicketRequestor from '../../../services/resources/ticket';
 import SystemSelect from '../../utils/SystemSelect';
 
 const TicketForm = props => {
+  
   const ImageUpload = React.createRef();
 
   const [load, setLoad] = useState(false);
+
   const [input, setInput] = useState({
     email: '',
     name: '',

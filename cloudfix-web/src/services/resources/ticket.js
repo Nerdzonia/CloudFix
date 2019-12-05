@@ -46,16 +46,7 @@ class Ticket {
 
     addMessage = async (object) => {
         try {
-            const form = new FormData();
-            Object.keys(object).forEach(element => {
-                    form.append(element, object[element]);
-            });
-
-            let { data } = await axiosRequestor.post(`${this.baseUrl}/addMessage`, form, {
-                headers: {
-                    'Content-type': 'multipart/form-data'
-                }
-            });
+            let { data } = await axiosRequestor.post(`${this.baseUrl}/addMessage`, object);
 
             return data;
         } catch (err) {
