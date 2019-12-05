@@ -34,12 +34,7 @@ const statusSearch = [
   {
     key: "respondido",
     text: "Respondido",
-    value: "answered"
-  },
-  {
-    key: "atrasado",
-    text: "Atrasado",
-    value: "late"
+    value: "solved"
   },
   {
     key: "fechado",
@@ -47,29 +42,7 @@ const statusSearch = [
     value: "closed"
   }
 ];
-
-const Row = (id, status, system, title, updatedAt, index) => (
-  <Table.Row key={`${title}-${index}`}>
-    <Table.Cell>{status}</Table.Cell>
-    <Table.Cell>{system}</Table.Cell>
-    <Table.Cell>{title}</Table.Cell>
-    <Table.Cell>{moment(updatedAt).fromNow()}</Table.Cell>
-    <Table.Cell>
-
-      <Button.Group>
-        <Button basic icon='check circle' color='green' />
-        <Button basic icon='external square alternate' color='blue' onClick={() => Router.push({
-          pathname: '/myTicket',
-          query: { id: id },
-        })} />
-        <Button icon='stop circle' color='red' />
-      </Button.Group>
-    </Table.Cell>
-  </Table.Row>
-);
-
 const TicketList = (props) => {
-
   const {
     ticketList
   } = props;
@@ -138,7 +111,6 @@ const TicketList = (props) => {
   });
 
   const handleSelect = (date) => {
-    console.log(date)
     setSelectionRange({
       ...selectionRange,
       ...date.selection
@@ -183,7 +155,6 @@ const TicketList = (props) => {
     let newQuery = {};
     Object.keys(inputs).map(e => inputs[e] !== "" ? newQuery[e] = inputs[e] : null);
     setQuery({ ...newQuery })
-    console.log(newQuery)
     await ticketRequestor.getAllTickets({ query: { ...newQuery } }).then(ticket => {
       setSort({
         column: null,
@@ -205,8 +176,36 @@ const TicketList = (props) => {
     setInputs({ ...fields })
   }
 
+  const updateTicketStatus = async (id, status) => {
+    await ticketRequestor.updateStatus(id, status);
+    await ticketRequestor.getAllTickets({ pagination: {...paginateTicket}, query}).then(ticket => {
+      setSort({
+        ...sort,
+        data: ticket.data.docs || []
+      })
+    });
+  }
+
+  const Row = (id, status, system, title, updatedAt, index) => (
+    <Table.Row key={`${title}-${index}`} positive={status === 'solved'} negative={status === 'closed'} >
+      <Table.Cell>{status === "open" ? "Aberto" : status === "solved" ? "Resolvido" : status === "closed" ? "Fechado" : null}</Table.Cell>
+      <Table.Cell>{system}</Table.Cell>
+      <Table.Cell>{title}</Table.Cell>
+      <Table.Cell>{moment(updatedAt).fromNow()}</Table.Cell>
+      <Table.Cell>
+        <Button.Group>
+          <Button basic icon='check circle' color='green' onClick={() => updateTicketStatus(id, 'solved')} disabled={status === 'solved'} /> 
+          <Button basic icon='external square alternate' color='blue' onClick={() => Router.push({
+            pathname: '/myTicket',
+            query: { id: id },
+          })} />
+          <Button icon='stop circle' color='red' onClick={() => updateTicketStatus(id, 'closed')} disabled={status ==='closed'} />
+        </Button.Group>
+      </Table.Cell>
+    </Table.Row>
+  );
+
   const { column, direction, data } = sort
-  console.log(data)
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={16}>

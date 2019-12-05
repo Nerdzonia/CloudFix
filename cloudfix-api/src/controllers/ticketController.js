@@ -212,20 +212,21 @@ router.post('/searcByCriteria', async (req, res) => {
     }
 });
 
-router.get('/updateStatus/:status', async (req, res) => {
+router.post('/updateStatus', async (req, res) => {
     try {
         const schema = Joi.object().keys({
-            status: Joi.string().required()
+            id: Joi.string().required(),
+            status: Joi.string().required(),
         });
-
-        Joi.validate(req.params, schema, (err, result) => {
+      
+        Joi.validate(req.body, schema, (err, result) => {
             if (err)
                 return res.status(400).send({ error: `Erro ao procurar ticket ${err}` });
 
             const ENUM = { OPEN: 'open', SOLVED: 'solved', CLOSED: 'closed' };
 
             if (Object.keys(ENUM).some(e => ENUM[e] === result.status)) {
-                //salvar se o status corresponde a algum dos valores do objeto
+                updateTicket(result, res);
             } else {
                 res.status(400).send({ error: `Status invalido` });
             }
@@ -234,16 +235,5 @@ router.get('/updateStatus/:status', async (req, res) => {
         res.status(400).send({ error: `Não pode achar o ticket ${err}` })
     }
 });
-
-// router.post('/listAll', async (req, res) => {
-//     try {
-//         listAllTicket(res, {
-//             path: 'tickets',
-//             populate: 'chat'
-//         }, req.params.page);
-//     } catch (error) {
-//         return res.status(400).send({ error: `Could't list clients. Error: ${error}` });
-//     }
-// });
 
 module.exports = app => app.use('/ticket', router);
