@@ -85,9 +85,10 @@ const TicketList = (props) => {
   const [query, setQuery] = useState({});
   const [paginateTicket, setPaginateTicket] = useState({});
   const [paginateInfo, setPaginateInfo] = useState(ticketList);
+  const [inputs, setInputs] = useState({});
 
   const handleSort = async (clickedColumn) => {
-    const { column, data, direction } = sort;
+    const { column, direction } = sort;
     let paginateRule = {};
 
     if (column !== clickedColumn) {
@@ -137,9 +138,15 @@ const TicketList = (props) => {
   });
 
   const handleSelect = (date) => {
+    console.log(date)
     setSelectionRange({
       ...selectionRange,
       ...date.selection
+    })
+    setInputs({
+      ...inputs,
+      startAt: new Date(date.selection.startDate).toISOString(),
+      endsAt: new Date(date.selection.endDate).toISOString()
     })
   }
 
@@ -168,7 +175,38 @@ const TicketList = (props) => {
     });
   }
 
-  const { column, direction, data } = sort;
+  const handleInputs = ({ name, value }, e) => {
+    setInputs({ ...inputs, [name]: value });
+  }
+
+  const handleSendQuery = async () => {
+    let newQuery = {};
+    Object.keys(inputs).map(e => inputs[e] !== "" ? newQuery[e] = inputs[e] : null);
+    setQuery({ ...newQuery })
+    console.log(newQuery)
+    await ticketRequestor.getAllTickets({ query: { ...newQuery } }).then(ticket => {
+      setSort({
+        column: null,
+        data: ticket.data.docs || [],
+        direction: null,
+      });
+      setPaginateInfo(ticket.data);
+    })
+  }
+
+  const handleClenInputs = () => {
+    let fields = {}
+    Object.keys(inputs).map(e => fields[e] = "");
+    setSelectionRange({
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection',
+    })
+    setInputs({ ...fields })
+  }
+
+  const { column, direction, data } = sort
+  console.log(data)
   return (
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={16}>
@@ -196,20 +234,29 @@ const TicketList = (props) => {
                 <Segment>
                   <Menu secondary>
                     <Menu.Menu position="left">
-                      <Menu.Item>
-                        <Input icon='search' placeholder='Buscar campo...' />
-                      </Menu.Item>
+
                       <Menu.Item>
                         <Button compact icon labelPosition='right' onClick={() => setActive(!isActive)}>
                           Busca Avançada
                           <Icon name='search' />
                         </Button>
                       </Menu.Item>
-                      <Menu.Item>
-                        <Form>
-                          <Form.Select options={statusSearch} inline label='Marcar como:' placeholder='Aberto' />
-                        </Form>
-                      </Menu.Item>
+                      {isActive
+                        ? <>
+                          <Menu.Item>
+                            <Button compact color="green" icon labelPosition='right' onClick={handleSendQuery}>
+                              Buscar
+                          <Icon name='search plus' />
+                            </Button>
+                          </Menu.Item>
+                          <Menu.Item>
+                            <Button compact color="red" icon labelPosition='right' onClick={handleClenInputs}>
+                              Limpar
+                          <Icon name='eraser' />
+                            </Button>
+                          </Menu.Item>
+                        </>
+                        : null}
                     </Menu.Menu>
                   </Menu>
                 </Segment>
@@ -219,25 +266,15 @@ const TicketList = (props) => {
                   ? <Segment>
                     <Form>
                       <Form.Group widths='equal'>
-                        <Form.Select options={statusSearch} fluid label='Status:' placeholder='Aberto' />
-
-                        {/*trazer select com nome de clientes */}
-                        <Form.Input fluid label='Cliente:' placeholder='Evillyn' />
-
-                        {/*systemselect*/}
-                        <SystemSelect
-                          placeholder="selecione o sistema"
-                          label="Sistema:"
-                        />
-
+                        <Form.Select options={statusSearch} name="status" fluid label='Status:' onChange={(e, d) => handleInputs(d)} value={inputs.status || ''} placeholder='Aberto' />
+                        <Form.Input fluid label='Cliente:' value={inputs.name || ''} name="name" placeholder='Evillyn' onChange={(e, d) => handleInputs(d)} />
+                        <SystemSelect placeholder="selecione o sistema" value={inputs.system || ''} label="Sistema:" name="system" onChange={(e, d) => handleInputs(d)} />
                       </Form.Group>
                       <Form.Group widths="equal">
                         <DateRange
                           locale={rdrLocales.pt}
-
                           ranges={[selectionRange]}
                           onChange={handleSelect}
-
                         />
                       </Form.Group>
                     </Form>
