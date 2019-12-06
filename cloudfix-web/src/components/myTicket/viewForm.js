@@ -6,6 +6,7 @@ import Router from 'next/router';
 import * as moment from 'moment';
 moment.locale('pt-BR')
 
+
 const MessageContainer = ({ message }) => (
     <p style={{ fontSize: '1.4em' }}>
         {message}
