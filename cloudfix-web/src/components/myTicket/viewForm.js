@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Header, Container, Segment, Divider, Form, Grid, Button } from 'semantic-ui-react';
+import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
-
+import Router from 'next/router';
 import * as moment from 'moment';
 moment.locale('pt-BR')
 
@@ -22,11 +23,12 @@ const MessageContainer = ({ message }) => (
     });
   
     const [load, setLoad] = useState(false);
+    
+    const [alert, setAlert] = useState(null);
 
     const handleFildsChange = (e, { name, value }) => {
       setInput({ ...input, [name]: value });
     }
-
     
   const sendMessage = async () => {
     let check = {};
@@ -53,7 +55,8 @@ const MessageContainer = ({ message }) => (
         if (!data.error) {
           Router.push(`/ticket?id=${data.id}`, '/ticket');
         } else {
-          setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
+          setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" 
+          message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
         }
         
         setLoad(false);
@@ -63,8 +66,6 @@ const MessageContainer = ({ message }) => (
     const [checkInput, setCheckInput] = useState({
         message: false
     });
-
-    
 
     const {
         name,
@@ -96,7 +97,8 @@ const MessageContainer = ({ message }) => (
                         Imagens do erro
                     </Header>
                     : null}
-                    {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer message={`Imagem ${i+1}`} />  </a>) : null}
+                    {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer 
+                    message={`Imagem ${i+1}`} />  </a>) : null}
                     <Header as='h3'>
                         Mensagem:
                     </Header>
