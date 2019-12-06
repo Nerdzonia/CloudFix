@@ -87,34 +87,129 @@ const MessageContainer = ({ message }) => (
             </Header>
 
             <Container textAlign='justified'>
-                <Segment>
-                    <Header as='h3'>
-                        Assunto:
-                    </Header>
-                    <MessageContainer message={title} />
-                    { images.length !== 0
-                    ? <Header as='h3'>
-                        Imagens do erro
-                    </Header>
-                    : null}
-                    {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer 
-                    message={`Imagem ${i+1}`} />  </a>) : null}
-                    <Header as='h3'>
-                        Mensagem:
-                    </Header>
-                    <MessageContainer message={message} />
-                    <Header as='h3'>
-                        Id:
-                    </Header>
-                    <MessageContainer message={_id} />
-                    <Header as='h3'>
-                        Status:
-                    </Header>
-                    <MessageContainer message={status} />
-                    <Header as='h3'>
-                        Última modificação:
-                    </Header>
-                    <MessageContainer message={moment(updatedAt).fromNow()} />
+              <Segment>
+                <Table basic='very' celled>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell></Table.HeaderCell>
+                      <Table.HeaderCell></Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+
+                  <Table.Body>
+                    <Table.Row>
+
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                              Assunto:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={title} />
+                      </Table.Cell>
+                    </Table.Row>
+
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                          { images.length !== 0
+                          ? <Header as='h3'>
+                              Imagens do erro
+                          </Header>
+                          : null}
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer message={`Imagem ${i+1}`} />  </a>) : null}
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                              Mensagem:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={message} />
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                              Id:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={_id} />
+                      </Table.Cell>
+                    </Table.Row>
+
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                                Status:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell positive={status === 'solved'} negative={status === 'closed'} >
+                        <MessageContainer message={status} />
+                      </Table.Cell>
+                    </Table.Row>
+                      
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                                Última modificação:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={moment(updatedAt).fromNow()} />
+                      </Table.Cell>
+
+                    </Table.Row>
+                    
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                                Sistema:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={system} />
+                      </Table.Cell>
+
+                    </Table.Row>
+
+                  </Table.Body>
+                </Table>
+                      
                 </Segment>
                 <Divider/>
                 <Segment>
