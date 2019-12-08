@@ -118,10 +118,11 @@ router.post('/addMessage', async (req, res) => {
 
             const authHeader = req.headers.authorization;
             if (authHeader) {
+
                 const parts = authHeader.split(' ');
 
                 if (parts.length === 2) {
-                    if (parts[1]) {
+                    if (parts[1] !== 'undefined') {
                         const [scheme, token] = parts;
                         const HASH = process.env.HASH || 'DefaultHash';
 
@@ -130,11 +131,17 @@ router.post('/addMessage', async (req, res) => {
                                 return res.status(401).send({ error: 'Token invalid!' });
 
                             const data = await findById(decoded.id);
+                            result.userType = 'admin';
                             result.name = data.name;
                             addMessageTicket(res, result.ticketId, result);
                         });
                     } else {
-                        addMessageTicket(res, result.ticketId, result);
+                        if(parts[1] === 'undefined'){
+                            result.userType = 'client';
+                            addMessageTicket(res, result.ticketId, result);
+                        }else{
+                            res.status(400).send({error: 'Não foi possivel salvar a mensagem!'})
+                        }
                     }
                 } else {
                     return res.status(400).send({ error: 'Sem autorização' });
