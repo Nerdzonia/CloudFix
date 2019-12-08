@@ -2,28 +2,13 @@ import React, { useState, Popup, useEffect } from "react";
 import Router from 'next/router';
 import Link from "next/link";
 import lodash from 'lodash';
-import {
-  Icon,
-  Table,
-  Menu,
-  Divider,
-  Grid,
-  Form,
-  Segment,
-  Button,
-  Input,
-  Breadcrumb,
-  Header,
-  Pagination
-} from "semantic-ui-react";
+import { Icon, Table, Menu, Divider, Grid, Form, Segment, Button, Input, Breadcrumb, Header, Pagination } from "semantic-ui-react";
 import { DateRange } from 'react-date-range';
 import * as rdrLocales from "react-date-range/dist/locale";
 import * as moment from 'moment';
-import ticketRequestor from '../../../services/resources/ticket';
-
 moment.locale('pt-BR')
+import ticketRequestor from '../../../services/resources/ticket';
 import SystemSelect from '../../utils/SystemSelect';
-// import ticket from "../../../services/resources/ticket";
 
 const statusSearch = [
   {
@@ -42,6 +27,7 @@ const statusSearch = [
     value: "closed"
   }
 ];
+
 const TicketList = (props) => {
   const {
     ticketList
@@ -145,7 +131,7 @@ const TicketList = (props) => {
         console.error(ticket.error)
       }
     });
-  }
+  } 
 
   const handleInputs = ({ name, value }, e) => {
     setInputs({ ...inputs, [name]: value });

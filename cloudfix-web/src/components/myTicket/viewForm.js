@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Header, Container, Segment, Divider, Form, Grid, Button } from 'semantic-ui-react';
+import { Header, Container, Segment, Divider, Form, Grid, Button, Table, Comment } from 'semantic-ui-react';
 import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
 import Router from 'next/router';
 import * as moment from 'moment';
 moment.locale('pt-BR')
-
+import lodash from 'lodash';
 
 const MessageContainer = ({ message }) => (
     <p style={{ fontSize: '1.4em' }}>
@@ -49,41 +49,45 @@ const MessageContainer = ({ message }) => (
       }
 
       let data = await TicketRequestor.addMessage(ticketObject);
-      console.log(data);
 
       setTicket(data);
 
+      data = await TicketRequestor.getTicket(ticketObject.ticketId);
+
+      console.log(data);
+      
         if (!data.error) {
-          Router.push(`/ticket?id=${data.id}`, '/ticket');
+          Router.push(`/myTicket?id=${data.id}`, '/ticket');
         } else {
           setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark" 
           message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
         }
         
-        setLoad(false);
+      setLoad(false);
       }
     }
 
-    const [checkInput, setCheckInput] = useState({
-        message: false
-    });
+    const [checkInput, setCheckInput] = useState({ message: false });
 
-    const {
-        name,
-        _id,
-        system,
-        title,
-        message,
-        status,
-        updatedAt,
-        images,
-        chat
-    } = ticket;
+    const { name, system, title, message, status, updatedAt, images, chat } = ticket;
+    
+     const Row = (createdAt, message, name, index) => ( 
+    <Comment key={`${message}-${index}`} >
+      <Comment.Avatar content='{{ name.charAt(0) }}'/>
+      <Comment.Content>
+        <Comment.Author as='a'>{name}</Comment.Author>
+        <Comment.Metadata>
+          <div>{moment(createdAt).fromNow()}</div>
+        </Comment.Metadata>
+        <Comment.Text>{message}</Comment.Text>
+      </Comment.Content>
+    </Comment>
+   );
   
     return (
         <Container style={{ paddingBottom: "5em" }} textAlign='center'>
             <Header as='h1' block>
-                Bem vindo ao seu ticket <span style={{ fontWeight: 'bold' }}>{name}</span><br />
+                Bem vindo ao seu ticket, <span style={{ fontWeight: 'bold' }}>{name}</span>!<br />
                 você escolheu o sistema <span style={{ textDecoration: 'underline' }}>{system}</span>
             </Header>
 
@@ -98,13 +102,42 @@ const MessageContainer = ({ message }) => (
                   </Table.Header>
 
                   <Table.Body>
-                    <Table.Row>
-
+                     <Table.Row>
                       <Table.Cell>
                         <Header as='h4' image>
                           <Header.Content>
                             <Header as='h3'>
-                              Assunto:
+                                Solicitante:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={name} />
+                      </Table.Cell>
+                    </Table.Row>
+
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                                Sistema:
+                            </Header>
+                          </Header.Content>
+                        </Header>
+                      </Table.Cell>
+                      <Table.Cell>
+                        <MessageContainer message={system} />
+                      </Table.Cell>
+                    </Table.Row>
+
+                    <Table.Row>
+                      <Table.Cell>
+                        <Header as='h4' image>
+                          <Header.Content>
+                            <Header as='h3'>
+                              Assunto do ticket:
                             </Header>
                           </Header.Content>
                         </Header>
@@ -114,11 +147,12 @@ const MessageContainer = ({ message }) => (
                       </Table.Cell>
                     </Table.Row>
 
+                    {/*
                     <Table.Row>
                       <Table.Cell>
                         <Header as='h4' image>
                           <Header.Content>
-                          { images.length !== 0
+                          { images
                           ? <Header as='h3'>
                               Imagens do erro
                           </Header>
@@ -130,34 +164,20 @@ const MessageContainer = ({ message }) => (
                         {images ? images.map((img, i) => <a key={i} href={img} target="_blank"><MessageContainer message={`Imagem ${i+1}`} />  </a>) : null}
                       </Table.Cell>
                     </Table.Row>
-                    <Table.Row>
+                    */}
 
+                    <Table.Row>
                       <Table.Cell>
                         <Header as='h4' image>
                           <Header.Content>
                             <Header as='h3'>
-                              Mensagem:
+                              Descrição:
                             </Header>
                           </Header.Content>
                         </Header>
                       </Table.Cell>
                       <Table.Cell>
                         <MessageContainer message={message} />
-                      </Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-
-                      <Table.Cell>
-                        <Header as='h4' image>
-                          <Header.Content>
-                            <Header as='h3'>
-                              Id:
-                            </Header>
-                          </Header.Content>
-                        </Header>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <MessageContainer message={_id} />
                       </Table.Cell>
                     </Table.Row>
 
@@ -189,72 +209,51 @@ const MessageContainer = ({ message }) => (
                       <Table.Cell>
                         <MessageContainer message={moment(updatedAt).fromNow()} />
                       </Table.Cell>
-
                     </Table.Row>
-                    
-                    <Table.Row>
-                      <Table.Cell>
-                        <Header as='h4' image>
-                          <Header.Content>
-                            <Header as='h3'>
-                                Sistema:
-                            </Header>
-                          </Header.Content>
-                        </Header>
-                      </Table.Cell>
-                      <Table.Cell>
-                        <MessageContainer message={system} />
-                      </Table.Cell>
-
-                    </Table.Row>
-
                   </Table.Body>
                 </Table>
                       
                 </Segment>
                 <Divider/>
-                <Segment>
-                    <Header as="h3">Chat:</Header>
-                      <Grid.Row>
-                        <Grid.Column>
-                          <Form>
-                            <Form.Group>
-                              <Form.Field required width={11} >
-                                <Form.TextArea
-                                  style={{ minHeight: 200 }}
-                                  icon="comment alternate outline"
-                                  iconposition="left"
-                                  placeholder="Digite uma mensagem..."
-                                  error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
-                                  name='message'
-                                  value={input.message}
-                                  onChange={handleFildsChange}
-                                />
-                              </Form.Field>
-                            </Form.Group>
-                          </Form>
-                          </Grid.Column>
-                          <Grid.Column>
-                            <Button
-                              positive
-                              content="Enviar mensagem"
-                              icon="check"
-                              labelPosition="right"
-                              onClick={sendMessage}
-                              // disabled={load}
-                              // loading={load}
-                            ></Button>
-                        </Grid.Column>
-                      </Grid.Row>
-                </Segment>
-            </Container>
-            {/* <br/>
-            <Container textAlign='justified'>
-                <Segment>
-                <Header as='h2'>Chat com o suporte</Header>
-            
-                </Segment>
-            </Container> */}
+
+                          <Comment.Group>
+                            <Header as='h2' dividing>
+                            Acompanhe as atualizações do seu ticket
+                            </Header>
+
+                            <Comment.Group size='huge'>
+                              {lodash.map(chat, (e, i) => Row(e.createdAt, e.message, e.name, i))}
+                            </Comment.Group>
+                            
+                            <Divider/>
+
+                              <Form reply>
+                                <Form.Group>
+                                  <Form.Field required width={16} >
+                                    <Form.TextArea
+                                      style={{ minHeight: 200 }}
+                                      icon="comment alternate outline"
+                                      iconposition="left"
+                                      placeholder="Digite uma mensagem..."
+                                      error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
+                                      name='message'
+                                      value={input.message}
+                                      onChange={handleFildsChange}
+                                    />
+                                  </Form.Field>
+                                </Form.Group>
+                              </Form>
+                              <Button
+                                positive
+                                content="Enviar mensagem"
+                                icon="check"
+                                labelPosition="right"
+                                onClick={sendMessage}
+                                disabled={load}
+                                loading={load}
+                              ></Button>
+                          </Comment.Group>                            
+              </Container>
         </Container>
     );
 }
