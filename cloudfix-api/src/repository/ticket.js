@@ -71,7 +71,8 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
             if (doc !== null) {
                 const chat = new Chat({
                     name,
-                    message
+                    message,
+                    userType
                 });
 
                 doc.chat.push(chat);
