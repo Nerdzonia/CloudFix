@@ -185,7 +185,7 @@ const TicketList = (props) => {
             pathname: '/myTicket',
             query: { id: id },
           })} />
-          <Button icon='stop circle' color='red' onClick={() => updateTicketStatus(id, 'closed')} disabled={status ==='closed'} />
+          <Button icon='stop circle' color='red' onClick={() => updateTicketStatus(id, 'closed')} disabled={status ==='closed' || status === 'solved'} />
         </Button.Group>
       </Table.Cell>
     </Table.Row>

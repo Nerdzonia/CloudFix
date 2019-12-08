@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Header, Container, Segment, Divider, Form, Button, Table, Comment } from 'semantic-ui-react';
+import { Header, Container, Segment, Divider, Form, Button, Table, Comment, Icon } from 'semantic-ui-react';
 import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
 import Router from 'next/router';
 import * as moment from 'moment';
 moment.locale('pt-BR')
 import lodash from 'lodash';
-import { loadToken } from '../../../src/lib/token';
 
 const MessageContainer = ({ message }) => (
   <p style={{ fontSize: '1.4em' }}>
@@ -66,7 +65,7 @@ const MyTicket = (props) => {
 
   const [checkInput, setCheckInput] = useState({ message: false });
 
-  const { name, system, title, message, status, updatedAt, images, chat } = ticket;
+  const { _id, name, system, title, message, status, updatedAt, images, chat } = ticket;
 
   const Row = (createdAt, message, name, index, userType) => (
     <Comment key={`${message}-${index}`} >
@@ -79,6 +78,35 @@ const MyTicket = (props) => {
       </Comment.Content>
     </Comment>
   );
+
+  
+  const updateTicketStatus = async (id, status) => {
+    setLoad(true);
+
+      let ticketObject = {
+        ticketId: ticket._id,
+        status: ticket.status
+      }
+
+      console.log('ticketObject');
+      console.log(ticketObject);
+
+      await TicketRequestor.updateStatus(id, status);
+
+      let data = await TicketRequestor.getTicket(ticketObject.ticketId);
+
+      console.log('data');
+      console.log(ticketObject);
+
+      if (!data.error) {
+        setTicket(data.data);
+      } else {
+        setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark"
+          message={data.error} open={true} title="Aviso" removeAlert={setAlert} />)
+      }
+
+      setLoad(false);
+  }
 
   return (
     <Container style={{ paddingBottom: "5em" }} textAlign='center'>
@@ -189,7 +217,7 @@ const MyTicket = (props) => {
                   </Header>
                 </Table.Cell>
                 <Table.Cell positive={status === 'solved'} negative={status === 'closed'} >
-                  <MessageContainer message={status} />
+                  <MessageContainer message={status === "open" ? "Aberto" : status === "solved" ? "Resolvido" : status === "closed" ? "Fechado" : null} />
                 </Table.Cell>
               </Table.Row>
 
@@ -207,6 +235,31 @@ const MyTicket = (props) => {
                   <MessageContainer message={moment(updatedAt).fromNow()} />
                 </Table.Cell>
               </Table.Row>
+            
+              <Table.Row>
+                <Table.Cell>
+                  <Header as='h4' image>
+                    <Header.Content>
+                      <Header as='h3'>
+                        Marcar ticket como:
+                            </Header>
+                    </Header.Content>
+                  </Header>
+                </Table.Cell>
+                <Table.Cell>
+                  <Button compact color="green" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'solved')}
+                   disabled={status === 'solved' || status === 'closed'} >
+                      Resolvido
+                      <Icon name='check circle' />
+                    </Button>
+                    <Button compact color="red" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'closed')}
+                     disabled={status ==='closed' || status === 'solved'}>
+                        Parado
+                        <Icon name='stop circle' />
+                    </Button>
+                </Table.Cell>
+              </Table.Row>
+
             </Table.Body>
           </Table>
 
