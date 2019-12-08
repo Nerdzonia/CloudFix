@@ -20,14 +20,15 @@ const TicketForm = props => {
 
   const [load, setLoad] = useState(false);
 
-  const [input, setInput] = useState({
+  const inputInitialState = {
     email: '',
     name: '',
     title: '',
     system: '',
     image: [],
     message: ''
-  });
+  }
+  const [input, setInput] = useState(inputInitialState);
 
   const [image, setImage] = useState(null);
 
@@ -42,6 +43,9 @@ const TicketForm = props => {
   const [alert, setAlert] = useState(null);
 
   const handleFildsChange = (e, { name, value }) => {
+    let check = {[name]: value};
+    if(check[name])
+      setCheckInput({...checkInput, [name]: false });
     setInput({ ...input, [name]: value });
   }
 
@@ -236,9 +240,9 @@ const TicketForm = props => {
                     </Form.Group>
                   </Grid.Column>
                   <Grid.Column>
-                    {image ? <ArchiveBox /> : null}
+                    {input.image.length !== 0 ? <ArchiveBox /> : null}
                     <Button.Group floated="right">
-                      <Button>Cancelar</Button>
+                      <Button onClick={() => setInput(inputInitialState)}>Cancelar</Button>
                       <Button.Or text="ou" />
                       <Button
                         positive
