@@ -11,13 +11,13 @@ const mailerTemplate = {
     from: 'handhead@gmail.com',
 }
 
+const templateLink = './src/resources/mail/email_update_template.ejs';
+
 const updateTicket = async (body, res) => {
     try {
         await Client.findOne({ tickets: body.id }, async (err, doc) => {
             if (err || !doc)
                 return res.status(400).send({ error: 'Erro ao tentar achar o ticket' });
-
-            let templateLink = './src/resources/mail/email_update_template.ejs';
 
             const sendEmailLink = convertToHtmlAndSendMail(
                 { link: `${process.env.WEB_LINK}?id=${doc.id}` },
@@ -62,7 +62,7 @@ const findTicketById = (res, id, populate) => {
 
 const addMessageTicket = async (res, id, ticketMessage = {}) => {
     try {
-        const { name, message } = ticketMessage;
+        const { name, message, userType } = ticketMessage;
 
         await Ticket.findById(id, async (err, doc) => {
             if (err)
@@ -85,6 +85,19 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
                     if (err)
                         return res.status(400).send({ error: `Error on save message in ticket ${err}` });
                 });
+
+                if(userType === 'admin')
+                    await Client.findOne({ tickets: id }, async (err, doc) => {
+                        if (err || !doc)
+                            return res.status(400).send({ error: 'Erro ao tentar achar o ticket' });
+            
+                        convertToHtmlAndSendMail(
+                            { link: `${process.env.WEB_LINK}?id=${doc.id}` },
+                            { ...mailerTemplate, to: doc.email, },
+                            templateLink
+                        );
+                    });
+
                 return res.send({ data: doc });
             } else {
                 res.status(400).send({ error: 'Ticket not valid wrong id' });
@@ -175,8 +188,8 @@ const searcByCriteria = async (res, result) => {
                         case 'sort':
                             options.sort = { [result.pagination.column]: result.pagination.sort }
                             break;
-                            case 'page':
-                                options.page = result.pagination.page
+                        case 'page':
+                            options.page = result.pagination.page
                             break;
                         case 'limit':
                             options[e] = result.pagination[e]
@@ -203,7 +216,7 @@ const searcByCriteria = async (res, result) => {
                         break;
                 }
             });
-            
+
         await Ticket.paginate(query, options, (err, doc) => {
             if (err)
                 return res.status(400).send({ error: 'Erro na busca avançada do ticket.' });
