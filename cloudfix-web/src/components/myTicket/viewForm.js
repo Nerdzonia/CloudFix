@@ -6,6 +6,7 @@ import Router from 'next/router';
 import * as moment from 'moment';
 moment.locale('pt-BR')
 import lodash from 'lodash';
+import { loadToken } from '../../../src/lib/token';
 
 const MessageContainer = ({ message }) => (
     <p style={{ fontSize: '1.4em' }}>
@@ -32,6 +33,8 @@ const MessageContainer = ({ message }) => (
     }
     
   const sendMessage = async () => {
+    
+    console.log('send message');
     let check = {};
     
     let validateInputs = Object.keys(check).every(element => {
@@ -71,11 +74,15 @@ const MessageContainer = ({ message }) => (
 
     const { name, system, title, message, status, updatedAt, images, chat } = ticket;
     
-     const Row = (createdAt, message, name, index) => ( 
+  const Row = (createdAt, message, name, index) => ( 
     <Comment key={`${message}-${index}`} >
       <Comment.Avatar content='{{ name.charAt(0) }}'/>
       <Comment.Content>
-        <Comment.Author as='a'>{name}</Comment.Author>
+        {/*{loadToken('token') ? <>
+        <Comment.Author as='a'>Administrador</Comment.Author></>
+         : <Comment.Author as='a'>{name}</Comment.Author>}
+        */}
+        <Comment.Author as='a'>Administrador</Comment.Author>
         <Comment.Metadata>
           <div>{moment(createdAt).fromNow()}</div>
         </Comment.Metadata>
@@ -244,9 +251,10 @@ const MessageContainer = ({ message }) => (
                                 </Form.Group>
                               </Form>
                               <Button
+                                size='large'
                                 positive
                                 content="Enviar mensagem"
-                                icon="check"
+                                icon="right arrow"
                                 labelPosition="right"
                                 onClick={sendMessage}
                                 disabled={load}
