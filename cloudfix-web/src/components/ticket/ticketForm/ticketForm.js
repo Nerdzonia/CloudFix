@@ -50,10 +50,12 @@ const TicketForm = props => {
       let file = e.target.files[0];
 
       if (file.size >= 2097152)
-        return alert('Porfavor insira um arquivo menor que 2MB');
+        return setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark"
+        message={'Porfavor insira um arquivo menor que 2MB'} open={true} title="Aviso" removeAlert={setAlert} />);
 
       if (input.image.length >= 5)
-        return alert('Maximo de arquivos alcançados');
+        return setAlert(<Alert buttonColor="red" iconTitle="warning" iconButton="checkmark"
+        message={'So pode carregar em ate arquivos.'} open={true} title="Aviso" removeAlert={setAlert} />);
 
       setInput({ ...input, image: input.image ? [file, ...input.image] : [file] });
 
