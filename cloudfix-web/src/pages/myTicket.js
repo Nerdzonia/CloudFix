@@ -20,7 +20,6 @@ const MyTicket = (props) => {
     
                 if (!data.error){
                     setTicket(data.data);
-                    console.log(data.data);
                 }
                 else{
                     setAlert(<Alert buttonColor='red' iconButton='checkmark' iconTitle='warning' message={`${data.error}. Redirecionando para home em 5 segundos.`} open={true} title='Erro'  removeAlert={setAlert} />)
