@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Header, Container, Segment, TextArea, Grid, Divider, Form, Button, Table, Comment, Icon } from 'semantic-ui-react';
+import { Header, Container, Segment, Label, TextArea, Grid, Divider, Form, Button, Table, Comment, Icon, Breadcrumb } from 'semantic-ui-react';
+import Link from "next/link";
 import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
 import userIcon from '../../../assets/images/user-icon.png';
@@ -92,15 +93,9 @@ const MyTicket = (props) => {
         status: ticket.status
       }
 
-      console.log('ticketObject');
-      console.log(ticketObject);
-
       await TicketRequestor.updateStatus(id, status);
 
       let data = await TicketRequestor.getTicket(ticketObject.ticketId);
-
-      console.log('data');
-      console.log(ticketObject);
 
       if (!data.error) {
         setTicket(data.data);
@@ -115,17 +110,27 @@ const MyTicket = (props) => {
   return (
     <Grid padded>
       <Grid.Row>
-        <Grid.Column>
-        {alert}
-      <Header as='h1' block>
-        Bem vindo ao seu ticket, <span style={{ fontWeight: 'bold' }}>{name}</span>!<br />
-        você escolheu o sistema <span style={{ textDecoration: 'underline' }}>{system}</span>
-      </Header>
-      </Grid.Column>
+        <Breadcrumb size='big'>
+          <Link href="/">
+            <Breadcrumb.Section link>Home </Breadcrumb.Section>
+          </Link>
+          <Breadcrumb.Divider icon="right angle" />
+          <Link href="/ticketList">
+            <Breadcrumb.Section link>Lista de Chamados </Breadcrumb.Section>
+          </Link>
+          <Breadcrumb.Divider icon="right arrow" />
+          <Breadcrumb.Section active>Ticket</Breadcrumb.Section>
+        </Breadcrumb>
       </Grid.Row>
       <Grid.Row>
-      <Grid.Column>
+        <Grid.Column>
+        {alert}
+        <Header as='h1' block textAlign='center' attached='top'>
+          Bem vindo ao seu ticket, <span style={{ fontWeight: 'bold' }}>{name}</span>!<br />
+          você escolheu o sistema <span style={{ textDecoration: 'underline' }}>{system}</span>
+        </Header>
 
+        <Segment attached>
           <Table basic='very' celled>
             <Table.Header>
               <Table.Row>
@@ -225,7 +230,11 @@ const MyTicket = (props) => {
                   </Header>
                 </Table.Cell>
                 <Table.Cell positive={status === 'solved'} negative={status === 'closed'} >
-                  <MessageContainer message={status === "open" ? "Aberto" : status === "solved" ? "Resolvido" : status === "closed" ? "Fechado" : null} />
+                  <MessageContainer message={
+                    <Label  size='big' color={status === "open" ? 'blue' : status === "solved" ? 'green' : status === "closed" ? 'red' : null}  >
+                      {status === "open" ? "Aberto" : status === "solved" ? "Resolvido" : status === "closed" ? "Fechado" : null}
+                    </Label>
+                  } />
                 </Table.Cell>
               </Table.Row>
 
@@ -255,21 +264,21 @@ const MyTicket = (props) => {
                   </Header>
                 </Table.Cell>
                 <Table.Cell>
-                  <Button compact color="green" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'solved')}
+                  <Button compact size='large' color="green" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'solved')}
                    disabled={status === 'solved' || status === 'closed'} >
                       Resolvido
                       <Icon name='check circle' />
                     </Button>
-                    <Button compact color="red" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'closed')}
-                     disabled={status ==='closed' || status === 'solved'}>
-                        Parado
+                    <Button compact size='large' color="red" icon labelPosition='right' onClick={() => updateTicketStatus(_id, 'closed')}
+                     disabled={status === 'solved'}>
+                        Fechado
                         <Icon name='stop circle' />
                     </Button>
                 </Table.Cell>
               </Table.Row>
 
             </Table.Body>
-          </Table>
+          </Table></Segment>
         </Grid.Column>
       </Grid.Row>
       <Divider />
@@ -282,7 +291,7 @@ const MyTicket = (props) => {
                 <Form.Group>
                   <Form.Field required>
                     <TextArea
-                      style={{ minWidth: 1100, minHeight: 150, resize: 'none' }} icon="comment alternate outline"
+                      style={{ minWidth: 1100, minHeight: 150, resize: 'none', fontSize:20 }} icon="comment alternate outline"
                       iconposition="left" placeholder="Digite uma mensagem..." error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
                       name='message' value={input.message} onChange={handleFildsChange}
                     />

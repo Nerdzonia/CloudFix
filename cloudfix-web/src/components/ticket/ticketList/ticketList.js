@@ -196,12 +196,12 @@ const TicketList = (props) => {
     <Grid container centered columns={1}>
       <Grid.Column mobile={16} tablet={10} computer={16}>
         <Grid.Row>
-          <Breadcrumb>
+          <Breadcrumb size='big'>
             <Link href="/">
               <Breadcrumb.Section link>Home </Breadcrumb.Section>
             </Link>
-            <Breadcrumb.Divider icon="right angle" />
-            <Breadcrumb.Section active>Tickets</Breadcrumb.Section>
+            <Breadcrumb.Divider icon="right arrow" />
+            <Breadcrumb.Section active>Lista de Chamados</Breadcrumb.Section>
           </Breadcrumb>
         </Grid.Row>
 

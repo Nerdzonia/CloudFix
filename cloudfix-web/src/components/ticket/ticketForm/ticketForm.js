@@ -129,7 +129,7 @@ const TicketForm = props => {
       {alert}
       <Grid.Column mobile={16} tablet={10} computer={12}>
         <Grid.Row>
-          <Breadcrumb>
+          <Breadcrumb size='big'>
             <Breadcrumb.Section active>
               Home
             </Breadcrumb.Section>
