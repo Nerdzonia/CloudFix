@@ -312,7 +312,7 @@ const MyTicket = (props) => {
               </Header>
 
               <Comment.Group size='huge'>
-                {(lodash.sortBy(chat, (o) => o.updatedAt).reverse().map((e, i) => Row(e.createdAt, e.message, e.name, i)))}
+                {(lodash.sortBy(chat, (o) => o.updatedAt).reverse().map((e, i) => Row(e.createdAt, e.message, e.name, i, e.userType)))}
               </Comment.Group>
             </>
             : null}
