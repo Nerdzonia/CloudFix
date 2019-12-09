@@ -3,6 +3,7 @@ import { Grid, Image, Icon, Header, Dropdown } from "semantic-ui-react";
 
 import logo from "../../../../assets/images/cloudfix.png";
 import { removeToken, loadToken } from '../../../lib/token';
+import adminIcon from "../../../../assets/images/admin-icon.png";
 
 
 
@@ -21,7 +22,7 @@ const HeaderC = props => {
         <Grid.Row>
           <Header as="h5">
             <div style={{ marginRight: 5, display: 'inline-block' }}>
-              <Icon name="settings" />
+              <Image size='mini' src={adminIcon} />
             </div>
             <Dropdown item text='Admin' >
               <Dropdown.Menu>
