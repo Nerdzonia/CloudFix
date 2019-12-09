@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Header, Container, Segment, Divider, Form, Button, Table, Comment, Icon } from 'semantic-ui-react';
 import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
-import Router from 'next/router';
+import userIcon from '../../../assets/images/user-icon.png';
+import adminIcon from '../../../assets/images/admin-icon.png';
 import * as moment from 'moment';
 moment.locale('pt-BR')
 import lodash from 'lodash';
@@ -68,7 +69,9 @@ const MyTicket = (props) => {
   const { _id, name, system, title, message, status, updatedAt, images, chat } = ticket;
 
   const Row = (createdAt, message, name, index, userType) => (
-    <Comment key={`${message}-${index}`} >
+    <Container key={`${message}-${index}`}  textAlign={userType === 'client' ? 'right' : 'left' }>
+    <Comment>
+      <Comment.Avatar src={userType === 'client' ? userIcon : adminIcon} spaced={userType === 'client' ? 'left' : 'right' }></Comment.Avatar>
       <Comment.Content>
         <Comment.Author as='a'>{userType === 'client' ? `Solicitante: ${name}` : `Administrador: ${name}` }</Comment.Author>
         <Comment.Metadata>
@@ -77,6 +80,7 @@ const MyTicket = (props) => {
         <Comment.Text>{message}</Comment.Text>
       </Comment.Content>
     </Comment>
+    </Container>
   );
 
   
@@ -264,6 +268,8 @@ const MyTicket = (props) => {
           </Table>
 
         </Segment>
+      </Container>
+      <Container textAlign='justified'>
 
         <Comment.Group>
           {status === 'open'
@@ -310,8 +316,6 @@ const MyTicket = (props) => {
               </Comment.Group>
             </>
             : null}
-
-
         </Comment.Group>
       </Container>
     </Container>
