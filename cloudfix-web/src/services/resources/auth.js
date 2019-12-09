@@ -10,7 +10,6 @@ class auth {
            setToken('token', data.token || '', 30);
            return data;
         }catch(error){
-            // console.log(error)
             return error.response.data;
         }
     }

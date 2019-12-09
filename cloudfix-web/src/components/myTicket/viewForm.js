@@ -19,6 +19,7 @@ import { Alert } from "../alert/alert";
 import TicketRequestor from "../../services/resources/ticket";
 import userIcon from "../../../assets/images/user-icon.png";
 import adminIcon from "../../../assets/images/admin-icon.png";
+import { loadToken } from '../../lib/token'
 import * as moment from "moment";
 moment.locale("pt-BR");
 import lodash from "lodash";
@@ -327,47 +328,51 @@ const MyTicket = props => {
                             </Table.Cell>
                           </Table.Row>
 
-                          <Table.Row>
-                            <Table.Cell>
-                              <Header as="h4" image>
-                                <Header.Content>
-                                  <Header as="h3">Marcar ticket como:</Header>
-                                </Header.Content>
-                              </Header>
-                            </Table.Cell>
-                            <Table.Cell>
-                              <Button
-                                compact
-                                size="large"
-                                color="green"
-                                icon
-                                labelPosition="right"
-                                onClick={() =>
-                                  updateTicketStatus(_id, "solved")
-                                }
-                                disabled={
-                                  status === "solved" || status === "closed"
-                                }
-                              >
-                                Resolvido
-                                <Icon name="check circle" />
-                              </Button>
-                              <Button
-                                compact
-                                size="large"
-                                color="red"
-                                icon
-                                labelPosition="right"
-                                onClick={() =>
-                                  updateTicketStatus(_id, "closed")
-                                }
-                                disabled={status === "solved"}
-                              >
-                                Fechado
-                                <Icon name="stop circle" />
-                              </Button>
-                            </Table.Cell>
-                          </Table.Row>
+                         {loadToken('token') 
+                         ? <Table.Row>
+                         <Table.Cell>
+                           <Header as="h4" image>
+                             <Header.Content>
+                               <Header as="h3">Marcar ticket como:</Header>
+                             </Header.Content>
+                           </Header>
+                         </Table.Cell>
+                         <Table.Cell>
+                           <Button
+                             compact
+                             size="large"
+                             color="green"
+                             icon
+                             labelPosition="right"
+                             onClick={() =>
+                               updateTicketStatus(_id, "solved")
+                             }
+                             disabled={
+                               status === "solved" || status === "closed"
+                             }
+                           >
+                             Resolvido
+                             <Icon name="check circle" />
+                           </Button>
+                           <Button
+                             compact
+                             size="large"
+                             color="red"
+                             icon
+                             labelPosition="right"
+                             onClick={() =>
+                               updateTicketStatus(_id, "closed")
+                             }
+                             disabled={status === "solved"}
+                           >
+                             Fechado
+                             <Icon name="stop circle" />
+                           </Button>
+                         </Table.Cell>
+                       </Table.Row> : null} 
+
+                          
+
                         </Table.Body>
                       </Table>
                     </Segment>

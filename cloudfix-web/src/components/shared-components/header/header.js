@@ -6,7 +6,6 @@ import { removeToken, loadToken } from '../../../lib/token';
 import adminIcon from "../../../../assets/images/admin-icon.png";
 
 
-
 const HeaderC = props => {
   return (
     <Grid centered stackable columns={3} >
@@ -22,7 +21,7 @@ const HeaderC = props => {
         <Grid.Row>
           <Header as="h5">
             <div style={{ marginRight: 5, display: 'inline-block' }}>
-              <Image size='mini' src={adminIcon} />
+              <Image size='mini' src={`${adminIcon}`} />
             </div>
             <Dropdown item text='Admin' >
               <Dropdown.Menu>

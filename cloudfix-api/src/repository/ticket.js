@@ -93,7 +93,7 @@ const addMessageTicket = async (res, id, ticketMessage = {}) => {
                             return res.status(400).send({ error: 'Erro ao tentar achar o ticket' });
             
                         convertToHtmlAndSendMail(
-                            { link: `${process.env.WEB_LINK}?id=${doc.id}` },
+                            { link: `${process.env.WEB_LINK}?id=${id}` },
                             { ...mailerTemplate, to: doc.email, },
                             templateLink
                         );
