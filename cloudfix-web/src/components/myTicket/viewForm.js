@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Header, Container, Segment, Divider, Form, Button, Table, Comment, Icon } from 'semantic-ui-react';
+import { Header, Container, Segment, TextArea, Grid, Divider, Form, Button, Table, Comment, Icon } from 'semantic-ui-react';
 import { Alert } from '../alert/alert';
 import TicketRequestor from '../../services/resources/ticket';
 import userIcon from '../../../assets/images/user-icon.png';
@@ -69,7 +69,7 @@ const MyTicket = (props) => {
   const { _id, name, system, title, message, status, updatedAt, images, chat } = ticket;
 
   const Row = (createdAt, message, name, index, userType) => (
-    <Container key={`${message}-${index}`}  textAlign={userType === 'client' ? 'right' : 'left' }>
+    <Container key={`${message}-${index}`}>
     <Comment>
       <Comment.Avatar src={userType === 'client' ? userIcon : adminIcon} spaced={userType === 'client' ? 'left' : 'right' }></Comment.Avatar>
       <Comment.Content>
@@ -113,15 +113,19 @@ const MyTicket = (props) => {
   }
 
   return (
-    <Container style={{ paddingBottom: "5em" }} textAlign='center'>
-      {alert}
+    <Grid padded>
+      <Grid.Row>
+        <Grid.Column>
+        {alert}
       <Header as='h1' block>
         Bem vindo ao seu ticket, <span style={{ fontWeight: 'bold' }}>{name}</span>!<br />
         você escolheu o sistema <span style={{ textDecoration: 'underline' }}>{system}</span>
       </Header>
+      </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
+      <Grid.Column>
 
-      <Container textAlign='justified'>
-        <Segment>
           <Table basic='very' celled>
             <Table.Header>
               <Table.Row>
@@ -266,59 +270,51 @@ const MyTicket = (props) => {
 
             </Table.Body>
           </Table>
+        </Grid.Column>
+      </Grid.Row>
+      <Divider />
 
-        </Segment>
-      </Container>
-      <Container textAlign='justified'>
-
-        <Comment.Group>
-          {status === 'open'
+      <Grid.Row>
+        <Grid.Column>
+        {status === 'open'
             ? <>
-              <Divider />
               <Form reply>
                 <Form.Group>
-                  <Form.Field required width={16} >
-                    <Form.TextArea
-                      style={{ minHeight: 200, resize: 'none' }}
-                      icon="comment alternate outline"
-                      iconposition="left"
-                      placeholder="Digite uma mensagem..."
-                      error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
-                      name='message'
-                      value={input.message}
-                      onChange={handleFildsChange}
+                  <Form.Field required>
+                    <TextArea
+                      style={{ minWidth: 1100, minHeight: 150, resize: 'none' }} icon="comment alternate outline"
+                      iconposition="left" placeholder="Digite uma mensagem..." error={checkInput.message ? { content: 'Digite alguma mensagem!' } : null}
+                      name='message' value={input.message} onChange={handleFildsChange}
                     />
                   </Form.Field>
                 </Form.Group>
               </Form>
-              <Button
-                size='large'
-                positive
-                content="Enviar mensagem"
-                icon="right arrow"
-                labelPosition="right"
-                onClick={sendMessage}
-                disabled={load}
-                loading={load}
+              <Button size='large' positive content="Enviar mensagem" icon="right arrow"
+               labelPosition="right" onClick={sendMessage} disabled={load} loading={load}
               ></Button>
             </>
             : null}
+        </Grid.Column>
+      </Grid.Row>
+      <Divider/>
 
+      <Grid.Row>
+        <Grid.Column>
+        <Comment.Group>
           {Array.isArray(chat) && chat.length !== 0
             ? <>
-              <Divider />
-              <Header as='h2' dividing>
+              <Header as='h2'>
                 Acompanhe as atualizações do seu ticket
               </Header>
-
               <Comment.Group size='huge'>
                 {(lodash.sortBy(chat, (o) => o.updatedAt).reverse().map((e, i) => Row(e.createdAt, e.message, e.name, i, e.userType)))}
               </Comment.Group>
             </>
             : null}
-        </Comment.Group>
-      </Container>
-    </Container>
+          </Comment.Group>
+        </Grid.Column>
+      </Grid.Row>
+  </Grid>
   );
 }
 
