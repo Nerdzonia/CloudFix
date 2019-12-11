@@ -162,6 +162,7 @@ const TicketForm = props => {
 
   return (
     <Grid container centered columns={1}>
+      {alert}
       <Grid.Column mobile={16} tablet={10} computer={16}>
         <Segment.Group>
           <Segment>

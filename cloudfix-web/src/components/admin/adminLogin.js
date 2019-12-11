@@ -100,7 +100,7 @@ class AdminLogin extends React.Component {
                 </Header>
               </Grid.Row>
             </Segment>
-
+            {this.state.alert}
             <Segment.Group>
               <Segment>
                 <Grid.Row>
